@@ -906,8 +906,8 @@ if __name__ == "__main__":
                 long_polling_timeout=20
             )
 
-            except Exception:
-                import traceback
-                traceback.print_exc()
-                print(">>> Neustart in 5 Sekunden...")
-                time.sleep(5)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            print(">>> Neustart in 5 Sekunden...")
+            time.sleep(5)
