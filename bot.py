@@ -890,11 +890,9 @@ if __name__ == "__main__":
     if os.getenv("RUN_MAIN") == "true":
         sys.exit()
 
-    threading.Thread(target=run).start()
-    
-    # 🔥 EINZIGER FIX: Auto-Restart bei Crash
-    while True:
-        try:
-            bot.infinity_polling(skip_pending=True, timeout=30)
-        except Exception as e:
-            print("Polling crashed, restarting...", e)
+    flask_thread = threading.Thread(target=run, daemon=True)
+    flask_thread.start()
+
+    print(">>> Polling wird gestartet...")
+
+    bot.infinity_polling(skip_pending=True)
