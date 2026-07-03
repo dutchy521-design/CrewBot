@@ -1,0 +1,3196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Royal Casino Hub</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Inter', sans-serif;
+
+/* warmes soft background */
+background:
+radial-gradient(circle at 20% 20%, rgba(160,70,255,0.18), transparent 40%),
+radial-gradient(circle at 80% 30%, rgba(255,0,255,0.12), transparent 45%),
+radial-gradient(circle at 50% 90%, rgba(255,215,0,0.08), transparent 40%),
+linear-gradient(180deg,#07030f,#12051f,#05020a);
+
+color:white;
+}
+
+/* subtle pattern overlay */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background-image: radial-gradient(rgba(255,140,60,0.08) 1px, transparent 1px);
+background-size: 18px 18px;
+pointer-events:none;
+opacity:0.6;
+}
+
+/* PAGES */
+.page{
+display:none;
+padding:22px;
+padding-bottom:110px;
+}
+.active{display:block;}
+
+/* CARDS (bubble style) */
+.card{
+background:
+linear-gradient(
+145deg,
+rgba(25,15,40,0.95),
+rgba(15,8,25,0.95)
+);
+
+border-radius:22px;
+padding:18px;
+margin-bottom:14px;
+
+border:1px solid rgba(190,120,255,0.25);
+
+box-shadow:
+0 0 25px rgba(180,80,255,0.15),
+0 12px 30px rgba(0,0,0,0.45);
+
+color:white;
+}
+
+.card:hover{
+transform: translateY(-3px);
+box-shadow:
+0 14px 30px rgba(255,140,60,0.18);
+}
+
+/* BUTTONS (bubble / pill) */
+button{
+width:100%;
+padding:13px;
+border:none;
+border-radius:999px;
+background:
+linear-gradient(
+135deg,
+#ff00ff,
+#7d2cff
+);
+color:white;
+font-weight:700;
+margin-top:10px;
+cursor:pointer;
+transition: 0.2s;
+
+box-shadow:
+0 10px 22px rgba(255,120,40,0.28),
+inset 0 2px 0 rgba(255,255,255,0.35),
+inset 0 -3px 0 rgba(0,0,0,0.08);
+}
+
+button:hover{
+transform: scale(1.03);
+box-shadow: 0 12px 26px rgba(255,120,40,0.35);
+}
+
+button:active{
+transform: scale(0.98);
+}
+
+/* XP BAR */
+.xp-bar{
+height:14px;
+background: rgba(0,0,0,0.08);
+border-radius:999px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.xp-fill{
+height:100%;
+width:0%;
+background:
+linear-gradient(
+90deg,
+#ff00ff,
+#9f4dff,
+#ffd700
+);
+transition: 0.8s ease;
+}
+
+/* NAVBAR (soft glass orange tint) */
+.navbar{
+position:fixed;
+bottom:14px;
+left:12px;
+right:12px;
+
+display:flex;
+justify-content:space-around;
+align-items:center;
+
+padding:10px 8px;
+
+background:
+rgba(15,10,25,0.85);
+backdrop-filter: blur(18px);
+
+border: 1px solid rgba(190,120,255,0.25);
+border-radius: 18px;
+
+box-shadow:
+0 18px 40px rgba(0,0,0,0.18),
+inset 0 1px 0 rgba(255,255,255,0.6);
+
+z-index:999;
+}
+
+.navbtn{
+flex:1;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+
+padding:8px 0;
+
+background:transparent;
+border:none;
+
+color:#d9cfff;
+font-size:12px;
+font-weight:700;
+
+opacity:0.7;
+transition:0.25s;
+
+border-radius:12px;
+}
+
+.navbtn:hover{
+opacity:1;
+transform: translateY(-2px);
+background: rgba(255,140,60,0.12);
+}
+
+.navbtn:active{
+transform: scale(0.96);
+}
+
+.navbtn:hover{
+opacity:1;
+transform: translateY(-1px);
+}
+
+/* SLOT (orange glow) */
+/* SLOT (orange glow) */
+#slotDisplay{
+  width:260px;
+  height:130px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin:0 auto;
+
+  font-size:58px !important;
+  letter-spacing:12px;
+  font-weight:900;
+
+  color:#fff8ef;
+
+  border-radius:26px;
+
+  background:
+  linear-gradient(
+  180deg,
+  #2b0f4d 0%,
+  #140722 100%
+  );
+
+  border:
+    4px solid #ffd700;
+
+  box-shadow:
+    0 25px 45px rgba(0,0,0,0.28),
+    inset 0 4px 10px rgba(255,255,255,0.08),
+    inset 0 -10px 20px rgba(0,0,0,0.35),
+    0 0 35px rgba(255,215,0,0.35);
+
+  position:relative;
+
+  overflow:hidden;
+
+  text-shadow:
+    0 3px 0 rgba(0,0,0,0.35),
+    0 0 15px rgba(255,215,0,0.45);
+
+transform: perspective(500px) rotateX(4deg);
+}
+
+/* obere glänzende leiste */
+#slotDisplay::before{
+  content:"";
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+
+  height:30%;
+
+  background:
+linear-gradient(
+180deg,
+rgba(255,255,255,0.18),
+rgba(255,255,255,0)
+);
+
+  pointer-events:none;
+}
+
+/* slot walzen look */
+#slotDisplay::after{
+  content:"";
+
+  position:absolute;
+  inset:0;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.04) 0px,
+      rgba(255,255,255,0.04) 2px,
+      transparent 2px,
+      transparent 86px
+    );
+
+  pointer-events:none;
+}
+
+.slot-rolling{
+  animation:
+    slotSpin 0.10s linear infinite,
+    slotGlow 1s ease infinite;
+}
+
+@keyframes slotGlow{
+
+0%{
+box-shadow:
+0 0 18px rgba(255,215,0,0.25);
+}
+
+50%{
+box-shadow:
+0 0 50px rgba(255,215,0,0.65);
+}
+
+100%{
+box-shadow:
+0 0 18px rgba(255,215,0,0.25);
+}
+
+}
+
+@keyframes slotSpin{
+  0%{transform:translateY(-5px);}
+  50%{transform:translateY(5px);}
+  100%{transform:translateY(-5px);}
+}
+
+.slot-jackpot{
+  animation: jackpotGlow 0.6s infinite;
+}
+
+@keyframes jackpotGlow{
+0%{box-shadow:0 0 15px rgba(255,215,0,0.35);}
+50%{box-shadow:0 0 40px rgba(255,215,0,0.8);}
+100%{box-shadow:0 0 15px rgba(255,215,0,0.35);}
+}
+
+/* TEXT */
+h2,h3{
+color:#ffd700;
+}
+
+small{
+opacity:0.7;
+}
+
+input{
+background: rgba(255,255,255,0.6);
+border: 1px solid rgba(255,140,60,0.2);
+color:#2b1d14;
+border-radius:12px;
+padding:10px;
+}
+
+/* DAILY GLOW */
+@keyframes glow {
+0% { box-shadow:0 0 0 rgba(255,140,60,0); }
+50% { box-shadow:0 0 18px rgba(255,140,60,0.25); }
+100% { box-shadow:0 0 0 rgba(255,140,60,0); }
+}
+
+.daily-active{
+animation: glow 1.2s infinite;
+}
+
+.slot-wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+  padding:18px;
+
+  background:
+  linear-gradient(
+    145deg,
+    rgba(30,15,45,0.95),
+    rgba(15,8,25,0.95)
+  );
+
+  border-radius:24px;
+
+  border:1px solid rgba(255,215,0,0.25);
+
+  box-shadow:
+    0 0 25px rgba(255,215,0,0.10),
+    0 10px 25px rgba(0,0,0,0.35);
+}
+
+.slot-header{
+  font-weight:900;
+  font-size:18px;
+  letter-spacing:0.5px;
+
+  color:#ffd700;
+
+  text-shadow:
+    0 2px 0 rgba(0,0,0,0.15),
+    0 6px 12px rgba(0,0,0,0.12);
+}
+
+.slot-sub{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:600;
+  opacity:0.75;
+
+  text-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card-title{
+font-weight:700;
+font-size:15px;
+margin-bottom:4px;
+}
+
+.card-sub{
+font-size:13px;
+opacity:0.7;
+}
+
+.card-sub{
+font-size:13px;
+opacity:0.7;
+}
+
+.stat-box{
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:18px;
+
+padding:18px 12px;
+
+text-align:center;
+
+transition:.25s;
+
+}
+
+.stat-box:hover{
+
+transform:translateY(-4px);
+
+background:rgba(255,255,255,.08);
+
+}
+
+.stat-icon{
+
+font-size:28px;
+
+margin-bottom:8px;
+
+}
+
+.stat-value{
+
+font-size:24px;
+
+font-weight:900;
+
+color:#ffd700;
+
+}
+
+.stat-label{
+
+margin-top:6px;
+
+font-size:13px;
+
+opacity:.75;
+
+}
+/* DEAL CARDS */
+.deal-card{
+position:relative;
+
+overflow:hidden;
+
+padding:20px;
+border-radius:24px;
+
+background:
+linear-gradient(145deg,#fff1e3,#ffd8b3);
+
+border:1px solid rgba(255,145,60,0.20);
+
+box-shadow:
+0 18px 35px rgba(0,0,0,0.12),
+inset 0 1px 0 rgba(255,255,255,0.7);
+
+transition:0.25s;
+}
+
+.mrpunter-featured{
+  position: relative;
+  overflow: hidden;
+}
+
+.deal-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 0 30px rgba(255,0,255,0.25),
+    0 0 15px rgba(255,215,0,0.20);
+}
+
+.deal-card::before{
+content:"";
+
+position:absolute;
+top:-50px;
+right:-50px;
+
+width:140px;
+height:140px;
+
+background:
+radial-gradient(circle,
+rgba(255,180,80,0.35),
+transparent 70%);
+
+pointer-events:none;
+}
+
+@keyframes fireMove {
+  0% { transform: scale(1) translateY(0px); opacity: 0.4; }
+  100% { transform: scale(1.1) translateY(-6px); opacity: 0.7; }
+}
+
+.mrpunter-featured::after {
+  content: "🔥";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  animation: flicker 0.8s infinite;
+  z-index: 2;
+}
+
+@keyframes flicker {
+  0% { transform: rotate(-5deg) scale(1); opacity:0.7; }
+  50% { transform: rotate(5deg) scale(1.2); opacity:1; }
+  100% { transform: rotate(-3deg) scale(1); opacity:0.8; }
+}
+
+.mrpunter-featured::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 10%, rgba(255,120,0,0.45), transparent 65%);
+  animation: fireMove 2s infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mrpunter-featured > * {
+  position: relative;
+  z-index: 2;
+}
+
+.deal-top{
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+margin-bottom:14px;
+}
+
+.deal-logo{
+font-size:34px;
+}
+
+.deal-badge{
+padding:6px 12px;
+border-radius:999px;
+
+font-size:11px;
+font-weight:800;
+
+
+  background:
+  linear-gradient(
+  135deg,
+  #ffd700,
+  #b8860b
+  );
+color:black;
+
+letter-spacing:0.5px;
+
+box-shadow:
+0 6px 12px rgba(255,120,40,0.25);
+}
+
+.deal-title{
+font-size:22px;
+font-weight:900;
+
+color:#ffd700;
+
+margin-bottom:6px;
+}
+
+.deal-text{
+font-size:14px;
+line-height:1.4;
+opacity:0.78;
+
+margin-bottom:16px;
+}
+
+.deal-btn{
+width:100%;
+
+padding:14px;
+
+border:none;
+border-radius:16px;
+
+font-weight:900;
+font-size:15px;
+
+background:
+linear-gradient(
+135deg,
+#ff00ff,
+#7d2cff
+);
+
+color:white;
+
+cursor:pointer;
+
+box-shadow:
+0 10px 20px rgba(255,120,40,0.30);
+
+transition:0.2s;
+}
+
+.deal-btn:hover{
+transform:scale(1.02);
+}
+
+.featured-deal{
+background:
+linear-gradient(
+145deg,
+rgba(50,25,70,0.98),
+rgba(20,10,30,0.98)
+);
+border:2px solid rgba(255,255,255,0.4);
+}
+
+/* ===== PREMIUM DEAL HEADER STYLE ===== */
+
+.deal-card{
+  position:relative;
+  overflow:hidden;
+  padding:18px;
+  border-radius:24px;
+  background:
+  linear-gradient(
+  145deg,
+  rgba(30,15,45,0.95),
+  rgba(15,8,25,0.95)
+  );
+  border: 1px solid rgba(255,215,0,0.25);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  transition: all 0.25s ease;
+  font-family: Arial, sans-serif;
+}
+
+.deal-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(255,140,60,0.25);
+}
+
+/* TOP ROW */
+.deal-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.deal-logo{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  object-fit:cover;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* BADGE */
+.deal-badge{
+  font-size:11px;
+  font-weight:900;
+  padding:5px 10px;
+  border-radius:999px;
+
+  background:
+  linear-gradient(
+  135deg,
+  #ffd700,
+  #b8860b
+  );
+  color:black;
+  box-shadow:0 8px 16px rgba(255,120,40,0.25);
+  letter-spacing:0.5px;
+}
+
+/* TITLE */
+.deal-title{
+  font-size:18px;
+  font-weight:900;
+  margin:6px 0;
+  color:#ffd700;
+}
+
+/* TEXT */
+.deal-text{
+  font-size:13px;
+  opacity:0.75;
+  margin-bottom:12px;
+}
+
+/* CTA BUTTON */
+.deal-btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  font-weight:900;
+  background:
+  linear-gradient(
+  135deg,
+  #ff00ff,
+  #7d2cff
+  );
+  box-shadow:0 10px 20px rgba(255,120,40,0.25);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.deal-btn:hover{
+  transform: scale(1.03);
+}
+
+.sg-glitter{
+  position: relative;
+  overflow: hidden;
+}
+
+/* animierter Glanzstreifen */
+.sg-glitter::before{
+  content:"";
+  position:absolute;
+  top:-60%;
+  left:-60%;
+  width:220%;
+  height:220%;
+
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.35) 50%,
+    rgba(255,255,255,0) 60%,
+    transparent 100%
+  );
+
+  transform: rotate(25deg);
+  animation: shine 2.5s infinite;
+  pointer-events:none;
+}
+
+@keyframes shine{
+  0% { transform: translateX(-70%) rotate(25deg); }
+  100% { transform: translateX(70%) rotate(25deg); }
+}
+
+.deal-card{
+  position: relative;
+  overflow: hidden;
+}
+
+/* GLOBALER GLANZ FÜR ALLE KARTEN */
+.deal-card::after{
+  content:"";
+  position:absolute;
+  top:-60%;
+  left:-60%;
+  width:220%;
+  height:220%;
+
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0) 40%,
+    rgba(255,255,255,0.25) 50%,
+    rgba(255,255,255,0) 60%,
+    transparent 100%
+  );
+
+  transform: rotate(25deg);
+  animation: cardShine 3s infinite;
+  pointer-events:none;
+}
+
+@keyframes cardShine{
+  0% { transform: translateX(-70%) rotate(25deg); }
+  100% { transform: translateX(70%) rotate(25deg); }
+}
+
+.hot-sticker{
+  position:absolute;
+  top:12px;
+  right:12px;
+
+  padding:6px 10px;
+  border-radius:999px;
+
+  font-size:11px;
+  font-weight:900;
+  color:black;
+
+  background:
+  linear-gradient(
+  135deg,
+  #ffd700,
+  #b8860b
+  );
+  box-shadow: 0 8px 18px rgba(255,80,40,0.35);
+
+  z-index: 5;
+
+  transform: rotate(8deg);
+}
+
+.navbtn.active{
+background:
+linear-gradient(
+135deg,
+#ff00ff,
+#7d2cff
+);
+
+color:white;
+opacity:1;
+
+box-shadow:
+0 0 20px rgba(255,0,255,0.4);
+
+border:1px solid rgba(255,215,0,0.4);
+}
+
+.hero-header{
+
+text-align:center;
+
+padding:20px 20px 8px;
+
+}
+
+.hero-logo{
+display:block;
+
+margin:0 auto 8px auto;
+
+width:360px;
+max-width:92%;
+
+height:auto;
+
+filter:
+drop-shadow(0 0 45px rgba(255,0,255,0.55))
+drop-shadow(0 0 25px rgba(255,215,0,0.45))
+drop-shadow(0 12px 35px rgba(0,0,0,0.45));
+
+animation:
+logoFloat 4s ease-in-out infinite;
+}
+
+/* sanftes Schweben */
+@keyframes logoFloat{
+  0%{
+    transform:translateY(0px) scale(1);
+  }
+
+  50%{
+    transform:translateY(-6px) scale(1.03);
+  }
+
+  100%{
+    transform:translateY(0px) scale(1);
+  }
+}
+
+/* Glow Pulse */
+@keyframes logoGlow{
+  0% {
+    filter:
+      drop-shadow(0 20px 35px rgba(0,0,0,0.35))
+      drop-shadow(0 0 10px rgba(255,140,60,0.15));
+  }
+  50% {
+    filter:
+      drop-shadow(0 25px 45px rgba(0,0,0,0.45))
+      drop-shadow(0 0 35px rgba(255,140,60,0.45));
+  }
+  100% {
+    filter:
+      drop-shadow(0 20px 35px rgba(0,0,0,0.35))
+      drop-shadow(0 0 10px rgba(255,140,60,0.15));
+  }
+}
+
+.hero-title{
+
+font-size:18px;
+opacity:.8;
+margin-top:10px;
+
+}
+
+.hero-subtitle{
+
+font-size:42px;
+font-weight:900;
+
+background:linear-gradient(
+90deg,
+#ffd700,
+#ffffff,
+#ffd700
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+margin-top:8px;
+
+letter-spacing:2px;
+
+text-shadow:
+0 0 20px rgba(255,215,0,.25);
+
+}
+
+.hero-text{
+
+margin-top:12px;
+
+font-size:15px;
+
+opacity:.75;
+
+letter-spacing:1px;
+
+}
+
+@keyframes floatLogo{
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+.hero-card{
+
+background:rgba(25,20,55,.85);
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:24px;
+
+padding:22px;
+
+box-shadow:
+0 0 35px rgba(128,90,255,.25);
+
+backdrop-filter:blur(18px);
+
+margin-top:25px;
+
+}
+
+.hero-top{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.hero-small{
+
+font-size:14px;
+
+opacity:.75;
+
+}
+
+.hero-level{
+
+font-size:34px;
+
+font-weight:900;
+
+margin-top:5px;
+
+}
+
+.hero-rank{
+
+padding:10px 18px;
+
+border-radius:30px;
+
+background:linear-gradient(90deg,#7d4dff,#b95cff);
+
+font-weight:700;
+
+}
+
+.hero-xp{
+
+margin-top:18px;
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+.hero-next{
+
+margin-top:12px;
+
+opacity:.75;
+
+font-size:15px;
+
+}
+
+.dashboard-grid{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:16px;
+
+margin-top:25px;
+
+}
+
+.dashboard-item{
+
+background:rgba(30,25,65,.85);
+
+border-radius:22px;
+
+padding:22px;
+
+text-align:center;
+
+cursor:pointer;
+
+transition:.25s;
+
+border:1px solid rgba(255,255,255,.06);
+
+box-shadow:
+0 0 20px rgba(120,70,255,.15);
+
+}
+
+.dashboard-item:hover{
+
+transform:translateY(-4px);
+
+box-shadow:
+0 0 30px rgba(170,120,255,.35);
+
+}
+
+.dash-icon{
+
+font-size:34px;
+
+}
+
+.dash-title{
+
+margin-top:12px;
+
+font-weight:bold;
+
+font-size:18px;
+
+}
+
+.dash-sub{
+
+margin-top:6px;
+
+font-size:13px;
+
+opacity:.7;
+
+}
+
+.community-card{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:24px;
+
+margin-top:22px;
+
+border-radius:24px;
+
+background:
+linear-gradient(
+135deg,
+rgba(65,35,145,.95),
+rgba(18,23,55,.95)
+);
+
+border:1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 0 30px rgba(140,90,255,.20);
+
+transition:.25s;
+
+cursor:pointer;
+
+}
+
+.community-card:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 0 45px rgba(170,120,255,.35);
+
+}
+
+.community-badge{
+
+display:inline-block;
+
+padding:6px 14px;
+
+border-radius:30px;
+
+background:#ffd700;
+
+color:#111;
+
+font-weight:800;
+
+font-size:11px;
+
+margin-bottom:14px;
+
+letter-spacing:1px;
+
+}
+
+.community-title{
+
+font-size:28px;
+
+font-weight:900;
+
+margin-bottom:10px;
+
+}
+
+.community-desc{
+
+opacity:.78;
+
+line-height:1.7;
+
+font-size:15px;
+
+}
+
+.community-icon{
+
+font-size:60px;
+
+filter:drop-shadow(0 0 18px rgba(255,215,0,.45));
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div id="home" class="page active">
+<div class="hero-header">
+
+    <img src="https://i.imgur.com/20yat4W.png" class="hero-logo">
+
+    <div class="hero-title">
+        Willkommen bei
+    </div>
+
+    <div class="hero-subtitle">
+        CASHOUT CREW
+    </div>
+
+    <div class="hero-text">
+        Spiele • Community • Rewards
+    </div>
+
+</div>
+
+<div class="card hero-card">
+
+    <div class="hero-top">
+
+        <div>
+            <div class="hero-small">
+                Willkommen zurück 👋
+            </div>
+
+            <div class="hero-level">
+                Level <span id="level">1</span>
+            </div>
+        </div>
+
+        <div class="hero-rank">
+            Rookie
+        </div>
+
+    </div>
+
+    <div class="hero-xp">
+
+        <span id="xp">0</span> XP
+
+    </div>
+
+    <div class="xp-bar">
+
+        <div class="xp-fill" id="xpfill"></div>
+
+    </div>
+
+    <div id="nextlevel" class="hero-next">
+
+        Noch 100 XP bis Level 2
+
+    </div>
+
+</div>
+
+<div class="dashboard-grid">
+
+<div class="dashboard-item" onclick="claimDaily()">
+
+<div class="dash-icon">🎁</div>
+
+<div class="dash-title">
+Daily Bonus
+</div>
+
+<div class="dash-sub">
+Streak sammeln
+</div>
+
+</div>
+
+<div class="dashboard-item" onclick="showPage('profile')">
+
+<div class="dash-icon">🏆</div>
+
+<div class="dash-title">
+Mein Profil
+</div>
+
+<div class="dash-sub">
+XP & Level
+</div>
+
+</div>
+
+<div class="dashboard-item" onclick="spinSlot()">
+
+<div class="dash-icon">🎰</div>
+
+<div class="dash-title">
+Slot
+</div>
+
+<div class="dash-sub">
+Drehe täglich
+</div>
+
+</div>
+
+<div class="dashboard-item" onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
+
+<div class="dash-icon">👥</div>
+
+<div class="dash-title">
+Community
+</div>
+
+<div class="dash-sub">
+Jetzt beitreten
+</div>
+
+</div>
+
+</div>
+
+<div class="card community-card"
+onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
+
+    <div class="community-info">
+
+        <div class="community-badge">
+            COMMUNITY
+        </div>
+
+        <div class="community-title">
+            👥 Cashout Crew
+        </div>
+
+        <div class="community-desc">
+            Werde Teil unserer Community.<br>
+            Freispiele, Aktionen und exklusive Deals warten auf dich.
+        </div>
+
+    </div>
+
+    <div class="community-icon">
+        💬
+    </div>
+
+</div>
+
+<div class="card" onclick="show('wm')" style="cursor:pointer;">
+
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  ">
+
+    <div>
+      <div style="
+        font-size:22px;
+        font-weight:900;
+      ">
+        🏆 WM Tippspiel
+      </div>
+
+      <div style="
+        opacity:0.75;
+        margin-top:6px;
+        font-size:14px;
+      ">
+        Spiele tippen, Fragen beantworten & Punkte sammeln
+      </div>
+    </div>
+
+    <div style="font-size:42px;">
+      ⚽
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+🎰 Slot Machine
+
+<div class="slot-wrapper">
+  <div class="slot-header">🎰 Casino Slot</div>
+
+  <div id="slotDisplay">
+    🍒 🍒 🍒
+  </div>
+
+  <div class="slot-sub">Dreh und gewinne XP!</div>
+</div>
+
+<button id="spinBtn" onclick="spinSlot()">
+👑 ROYAL SPIN
+</button>
+
+<div id="slotResult" style="margin-top:10px;font-weight:bold;text-align:center;">
+--
+</div>
+</div>
+
+<!-- 🔥 DAILY BONUS (NEU) -->
+<div class="card" id="dailyCard">
+<h3>🎁 Daily Bonus</h3>
+<div>Streak: <b id="streak">0</b> 🔥</div>
+<div id="cooldown">Lädt...</div>
+
+<button id="dailyBtn" onclick="claimDaily()">
+Daily abholen
+</button>
+</div>
+
+<div class="card">
+Status: <b>Treasure Mode aktiv</b>
+</div>
+</div>
+
+<!-- WM -->
+<div id="wm" class="page">
+
+<h2>🏆 WM Tippspiel</h2>
+<div class="card">
+
+<div style="
+display:flex;
+justify-content:space-between;
+text-align:center;
+">
+
+<div>
+<div style="font-size:22px;font-weight:900;" id="wmPointsTop">
+0
+</div>
+<div>⭐ Punkte</div>
+</div>
+
+<div>
+<div style="font-size:22px;font-weight:900;" id="wmRankTop">
+-
+</div>
+<div>🏅 Rang</div>
+</div>
+
+<div>
+<div style="font-size:22px;font-weight:900;" id="wmTipsTop">
+0
+</div>
+<div>🎯 Tipps</div>
+</div>
+
+</div>
+
+</div>
+<!-- INFO CARD -->
+<div class="card">
+
+<h3>⚽ Willkommen zur WM</h3>
+
+<div style="opacity:0.8;line-height:1.5;">
+
+• Tippe alle WM Spiele<br>
+• Beantworte Bonusfragen<br>
+• Frage des Tages täglich neu<br>
+• Sammle Punkte im Ranking<br>
+• Gewinne am Ende Rewards 🎁
+
+</div>
+
+</div>
+
+<!-- SONDERTIPPS -->
+<div class="card">
+
+<h3>🏆 WM Sondertipps</h3>
+
+<div style="margin-bottom:10px;">
+Diese Tipps können nur einmal abgegeben werden.
+</div>
+
+<select id="worldChampion" style="width:100%;margin-bottom:10px;">
+<option value="">🏆 Weltmeister</option>
+<option>Deutschland</option>
+<option>Brasilien</option>
+<option>Argentinien</option>
+<option>Frankreich</option>
+<option>Spanien</option>
+<option>Portugal</option>
+<option>England</option>
+</select>
+
+<select id="germanyResult" style="width:100%;margin-bottom:10px;">
+<option value="">🇩🇪 Deutschland erreicht...</option>
+<option>Gruppenphase</option>
+<option>Achtelfinale</option>
+<option>Viertelfinale</option>
+<option>Halbfinale</option>
+<option>Finale</option>
+<option>Weltmeister</option>
+</select>
+
+<select id="topScorer" style="width:100%;margin-bottom:10px;">
+<option value="">⚽ Torschützenkönig</option>
+<option>Mbappé</option>
+<option>Kane</option>
+<option>Musiala</option>
+<option>Vinicius Jr.</option>
+<option>Haaland</option>
+<option>Anderer Spieler</option>
+</select>
+<input
+id="otherTopScorer"
+type="text"
+placeholder="Name eingeben"
+style="width:100%;margin-bottom:10px;display:none;">
+
+<button onclick="saveSpecialTips()">
+💾 Sondertipps speichern
+</button>
+
+<div id="specialTipsResult" style="margin-top:10px;"></div>
+<div id="mySpecialTips" style="margin-top:15px;"></div>
+</div>
+
+<div class="card">
+  <h3>🏆 WM Leaderboard</h3>
+
+  <div id="wmLeaderboard">Lädt...</div>
+
+  <div style="margin-top:15px;">
+    <b>📍 Deine Punkte</b>
+    <div id="myWmRank" style="margin-top:8px;opacity:0.9;">
+      Lädt...
+    </div>
+  </div>
+</div>
+
+<!-- SPIEL -->
+<div class="card">
+
+<div class="card">
+<h3>⚽ Spiele</h3>
+<button onclick="loadPastMatches()">
+📜 Vergangene Spiele anzeigen
+</button>
+
+<div id="pastMatches" style="margin-top:15px;"></div>
+<div id="wmMatches">Lädt Spiele...</div>
+</div>
+
+</div>
+
+<!-- BACK BUTTON -->
+<button onclick="show('home')">
+⬅️ Zurück
+</button>
+
+</div>
+
+<!-- DEALS -->
+<div id="deals" class="page">
+
+<h2>🔥 Cashout Crew Deals</h2>
+
+<div id="dealContainer"></div>
+
+</div>
+
+
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2>👤 Crew-Profil</h2>
+
+<div class="card" style="text-align:center;">
+
+<img
+id="avatarimg"
+src="https://i.imgur.com/OVNr24y.jpeg"
+style="
+width:110px;
+height:110px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #ffd700;
+box-shadow:0 0 20px rgba(255,215,0,0.35);
+margin-bottom:12px;
+">
+
+<div style="
+font-size:22px;
+font-weight:900;
+">
+<b id="username">Lädt...</b>
+</div>
+
+<button onclick="openAvatarPicker()">
+🎭 Avatar auswählen
+</button>
+<div id="avatarPicker" style="
+display:none;
+margin-top:15px;
+">
+
+<div style="
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+">
+
+<img
+src="https://i.imgur.com/OVNr24y.jpeg"
+onclick="selectAvatar('avatar1')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/HDpf0Hd.jpeg"
+onclick="selectAvatar('avatar2')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/PlLyR7g.jpeg"
+onclick="selectAvatar('avatar3')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/ECLtpUT.jpeg"
+onclick="selectAvatar('avatar4')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/PLGaEGF.jpeg"
+onclick="selectAvatar('avatar5')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/NJDPVhe.jpeg"
+onclick="selectAvatar('avatar6')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/wJGn4wY.jpeg"
+onclick="selectAvatar('avatar7')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+<img
+src="https://i.imgur.com/DzU6EZ4.jpeg"
+onclick="selectAvatar('avatar8')"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+cursor:pointer;
+">
+
+</div>
+</div>
+</div>
+
+
+<div class="card">
+
+<h3>🏆 Dein Rang</h3>
+
+<div style="
+font-size:28px;
+font-weight:900;
+text-align:center;
+color:#ffd700;
+margin-top:15px;
+">
+
+<span id="rankname">
+Neuling
+</span>
+
+</div>
+
+<div style="
+text-align:center;
+margin-top:15px;
+opacity:.85;
+">
+
+<span id="leveltitle">
+Level 1
+</span>
+
+</div>
+
+<div class="xp-bar" style="margin-top:18px;">
+<div class="xp-fill" id="xpfillprofile"></div>
+</div>
+
+<div style="
+text-align:center;
+margin-top:10px;
+opacity:.75;
+">
+
+<span id="profilexp">
+0 / 100 XP
+</span>
+
+</div>
+</div>
+</div>
+
+<div class="card">
+
+<h3>👥 Freunde einladen</h3>
+
+<div style="
+opacity:.85;
+line-height:1.5;
+margin-bottom:15px;
+">
+
+Lade deine Freunde ein und sammle XP.
+
+Je mehr aktive Einladungen du hast,
+desto schneller steigst du im Level auf
+und sicherst dir einen Platz im Leaderboard.
+
+</div>
+
+<input
+id="reflink"
+readonly
+style="
+width:100%;
+padding:14px;
+border-radius:14px;
+border:none;
+background:rgba(255,255,255,0.08);
+color:white;
+font-weight:700;
+box-sizing:border-box;
+">
+
+<button onclick="copyLink()">
+📋 Link kopieren
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>📊 Deine Statistiken</h3>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+margin-top:18px;
+">
+
+<div class="stat-box">
+<div class="stat-icon">👥</div>
+<div class="stat-value" id="invitecount">0</div>
+<div class="stat-label">Einladungen</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-icon">⭐</div>
+<div class="stat-value" id="profillevel">1</div>
+<div class="stat-label">Level</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-icon">💎</div>
+<div class="stat-value" id="profilxp">0</div>
+<div class="stat-label">XP</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-icon">🔥</div>
+<div class="stat-value" id="profilstreak">1</div>
+<div class="stat-label">Streak</div>
+</div>
+
+</div>
+
+<div id="invitelist"
+style="
+margin-top:20px;
+opacity:.8;
+">
+</div>
+
+</div>
+
+<!-- LEADERBOARD -->
+<div class="card">
+<h3>🏆 Leaderboard</h3>
+
+<div id="leaderboard">
+Lädt...
+</div>
+
+<div style="margin-top:15px;">
+<b>📍 Deine Platzierung</b>
+<div id="myrank" style="margin-top:8px;opacity:0.9;">
+Lädt...
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- NAV -->
+<div class="navbar">
+<button class="navbtn" onclick="show('home')">Home</button>
+<button class="navbtn" onclick="show('deals')">Deals</button>
+<button class="navbtn" onclick="show('profile')">Profil</button>
+</div>
+
+<script>
+const deals = [
+
+{
+name:"Rooli",
+
+logo:"https://www.google.com/s2/favicons?domain=rooli.live&sz=128",
+
+badge:"TOP PICK",
+
+bonus:"100% bis 500€",
+details:[
+"💰 Max Cashout 5.000€",
+"⚡ Schnelle Auszahlung",
+"🎯 5€ Max Bet"
+],
+link:"https://rooli.live/aaonnulcsq"
+},
+
+{
+name:"Lucky Capone",
+
+logo:"https://www.google.com/s2/favicons?domain=luckycapone.com&sz=128",
+
+badge:"EXKLUSIV",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 Mindesteinzahlung 20€"
+],
+link:"https://track.velvet.partners/visit/?bta=35830&brand=LUCKYCAPONE&nci=5420&afp10=Telegram"
+},
+
+{
+name:"Thorfortune",
+logo:"https://www.google.com/s2/favicons?domain=thorfortune.com&sz=128",
+badge:"BELIEBT",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 5€ Max Bet"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5647&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+{
+name:"Winbeatz",
+logo:"https://www.google.com/s2/favicons?domain=winbeatz.com&sz=128",
+badge:"EMPFOHLEN",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 5€ Max Bet"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5472&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+{
+name:"Gambloria",
+logo:"https://www.google.com/s2/favicons?domain=gambloria.com&sz=128",
+badge:"NEU",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 Mindesteinzahlung 20€"
+],
+link:"https://track.velvet.partners/visit/?bta=35830&brand=GAMBLORIA&nci=5344&afp10=Telegram"
+},
+
+{
+name:"PlayJonny",
+logo:"https://www.google.com/s2/favicons?domain=playjonny.com&sz=128",
+badge:"VIP",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 5€ Max Bet"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5345&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+{
+name:"Roulettino",
+logo:"https://www.google.com/s2/favicons?domain=roulettino.com&sz=128",
+badge:"CASINO",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Max Cashout 10x",
+"⚡ Schnelle Auszahlung",
+"🎯 5€ Max Bet"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5386&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+{
+name:"ColdBet",
+logo:"https://www.google.com/s2/favicons?domain=coldb4.com&sz=128",
+badge:"RAW",
+bonus:"Für erfahrene Spieler",
+details:[
+"⚡ Auszahlung innerhalb Minuten",
+"🎯 5€ Max Bet",
+"🎲 RAW Casino"
+],
+link:"https://coldb4.com/CASHOUTCREW"
+}
+
+];
+
+let spinLocked = false;
+function show(p){
+document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+document.getElementById(p).classList.add('active');
+
+document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+document.querySelector(`[onclick="show('${p}')"]`)?.classList.add('active');
+
+// 👉 WM CONTENT LADEN WENN WM GEÖFFNET WIRD
+if(p === "wm"){
+  loadWmMatches();
+  loadWmLeaderboard();
+  loadSpecialTips();
+}
+}
+
+/* TELEGRAM */
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+tg.ready();
+tg.expand();
+
+
+/* USER */
+let telegramUser = null;
+
+if (tg?.initDataUnsafe?.user?.id) {
+  telegramUser = String(tg.initDataUnsafe.user.id);
+} else {
+  telegramUser = "123456";
+}
+
+console.log("telegramUser:", telegramUser);
+
+
+/* LEVEL SYSTEM */
+const levelData = {
+1:{ name:"👋 Neuling" },
+2:{ name:"🎁 Bonusjäger" },
+3:{ name:"💰 Sammler" },
+4:{ name:"🎰 Stammspieler" },
+5:{ name:"🍀 Glückspilz" },
+6:{ name:"💎 VIP" },
+7:{ name:"⭐ Profi" },
+8:{ name:"🔥 Elite" },
+9:{ name:"👑 Legende" },
+10:{ name:"🏆 CrewBoss" }
+};
+
+/* SUPABASE */
+const SUPABASE_URL = "https://apjfcvflgwzqpzocjzpj.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwamZjdmZsZ3d6cXB6b2NqenBqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjgzMTMxOCwiZXhwIjoyMDk4NDA3MzE4fQ.BLFMn7DbjHgOTIK4EVHFXu1W17mL2ta7zu8hRKtGCvI";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const avatarUrls = {
+
+avatar1:"https://i.imgur.com/OVNr24y.jpeg",
+avatar2:"https://i.imgur.com/HDpf0Hd.jpeg",
+avatar3:"https://i.imgur.com/PlLyR7g.jpeg",
+avatar4:"https://i.imgur.com/ECLtpUT.jpeg",
+
+avatar5:"https://i.imgur.com/PLGaEGF.jpeg",
+avatar6:"https://i.imgur.com/NJDPVhe.jpeg",
+avatar7:"https://i.imgur.com/wJGn4wY.jpeg",
+avatar8:"https://i.imgur.com/DzU6EZ4.jpeg"
+
+};
+async function loadUser(){
+
+try{
+
+const { data, error } = await client
+.from("users")
+.select("*")
+.eq("id", String(telegramUser));
+
+if(error){
+document.getElementById("xp").innerText =
+"DB ERROR";
+return;
+}
+
+if(!data || data.length === 0){
+
+const { error: insertError } = await client
+.from("users")
+.insert({
+id: String(telegramUser),
+xp: 0,
+level: 1,
+invites: 0
+});
+
+if(insertError){
+document.getElementById("xp").innerText =
+"INSERT ERROR";
+return;
+}
+
+return loadUser();
+}
+
+const user = data[0];
+const avatar =
+user.avatar || "avatar1";
+
+document.getElementById("avatarimg").src =
+avatarUrls[avatar];
+document.getElementById("username").innerText =
+user.first_name || "Unbekannt";
+const xp = user.xp || 0;
+const level = user.level || 1;
+document.getElementById("leveltitle").innerHTML =
+`⭐ Level ${level}`;
+
+document.getElementById("xp").innerText = xp;
+document.getElementById("level").innerText = level;
+document.getElementById("profillevel").innerText = level;
+document.getElementById("profilxp").innerText = xp;
+document.getElementById("profilexp").innerText = `${xp} XP`;
+const MAX_LEVEL = 10;
+
+if(level >= MAX_LEVEL){
+
+document.getElementById("xpfill").style.width = "100%";
+
+document.getElementById("nextlevel").innerText =
+"🏛️ Maximales Level erreicht";
+
+}else{
+
+const current = (level - 1) * 100;
+const next = level * 100;
+
+let progress =
+((xp - current) / (next - current)) * 100;
+
+progress = Math.max(
+0,
+Math.min(progress,100)
+);
+
+document.getElementById("xpfill").style.width =
+progress + "%";
+document.getElementById("xpfillprofile").style.width =
+progress + "%";
+
+document.getElementById("nextlevel").innerText =
+`${Math.max(0,next - xp)} XP bis Level ${level + 1}`;
+
+}
+
+document.getElementById("rankname").innerText =
+levelData[level]?.name || "🏆 CrewBoss";
+
+document.getElementById("invitecount").innerText =
+user.invites || 0;
+
+document.getElementById("reflink").value =
+"https://t.me/Crew_1Bot?start=" + (user.ref_code || "");
+
+let list = user.invite_list;
+
+if(!list){
+
+document.getElementById("invitelist").innerHTML =
+"Noch keine Invites";
+
+}else{
+
+if(typeof list === "string"){
+try{
+list = JSON.parse(list);
+}catch(e){
+list = [];
+}
+}
+
+if(Array.isArray(list) && list.length > 0){
+
+document.getElementById("invitelist").innerHTML =
+list.map(i =>
+`👤 ${i.username || i.id}<br><small>📅 ${i.date || ""}</small>`
+).join("<br><br>");
+
+}else{
+
+document.getElementById("invitelist").innerHTML =
+"Noch keine Invites";
+
+}
+
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}
+
+/* DAILY SYSTEM */
+async function loadDaily(){
+const { data } = await client
+.from("users")
+.select("daily_last_claim, daily_streak")
+.eq("id", String(telegramUser))
+
+if(!data || !data.length) return;
+
+const u = data[0];
+const last = u.daily_last_claim ? new Date(u.daily_last_claim) : null;
+const now = new Date();
+
+const streak = u.daily_streak || 0;
+
+document.getElementById("streak").innerText = streak;
+
+const btn = document.getElementById("dailyBtn");
+
+if(last){
+const diff = now - last;
+const hours = diff / (1000*60*60);
+
+if(hours < 24){
+const left = 24 - hours;
+btn.disabled = true;
+startCountdown(left);
+return;
+}
+}
+
+btn.disabled = false;
+document.getElementById("cooldown").innerText = "Bereit zum Abholen";
+}
+
+function startCountdown(hours){
+let seconds = Math.floor(hours * 3600);
+
+const el = document.getElementById("cooldown");
+
+const i = setInterval(()=>{
+seconds--;
+const h = Math.floor(seconds/3600);
+const m = Math.floor((seconds%3600)/60);
+const s = seconds%60;
+
+el.innerText = `Cooldown: ${h}h ${m}m ${s}s`;
+
+if(seconds <= 0){
+clearInterval(i);
+loadDaily();
+}
+},1000);
+}
+
+window.claimDaily = async function(){
+  const btn = document.getElementById("dailyBtn");
+  btn.disabled = true;
+
+  try {
+    const { data, error } = await client
+      .from("users")
+      .select("daily_streak, daily_last_claim, xp")
+      .eq("id", String(telegramUser))
+      .single();
+
+    if (error || !data) {
+      console.log(error);
+      btn.disabled = false;
+      return;
+    }
+
+    const now = new Date();
+    const last = data.daily_last_claim ? new Date(data.daily_last_claim) : null;
+
+    if (last && (now - last) < 86400000) {
+      document.getElementById("cooldown").innerText = "⏳ Schon abgeholt";
+      btn.disabled = true;
+      return;
+    }
+
+    let streak = (data.daily_streak || 0) + 1;
+    if (streak > 7) streak = 1;
+
+    const bonus = streak;
+
+    await client
+      .from("users")
+      .update({
+        daily_streak: streak,
+        daily_last_claim: now.toISOString(),
+        xp: (data.xp || 0) + bonus
+      })
+      .eq("id", String(telegramUser))
+
+    await loadUser();
+    await loadDaily();
+
+  } catch (e) {
+    console.log(e);
+    btn.disabled = false;
+  }
+}
+
+/* LEADERBOARD */
+async function loadLeaderboard(){
+
+try{
+
+const { data } = await client
+.from("users")
+.select("id, first_name, xp, level")
+.order("xp", { ascending:false })
+.limit(5);
+
+if(data && data.length > 0){
+
+let html = "";
+
+data.forEach((u,index)=>{
+
+const hidden =
+u.first_name
+? u.first_name.substring(0,2) + "***"
+: "Spieler";
+
+let medal = "🏅";
+
+if(index === 0) medal = "🥇";
+if(index === 1) medal = "🥈";
+if(index === 2) medal = "🥉";
+
+html += `
+<div style="
+margin-bottom:14px;
+padding:12px;
+border-radius:14px;
+background:rgba(255,255,255,0.05);
+">
+
+<b>${medal} Platz ${index+1}</b><br>
+👤 ${hidden}<br>
+
+⭐ Level ${u.level || 1}
+
+<br>
+
+💎 ${u.xp || 0} XP
+
+</div>
+`;
+});
+
+document.getElementById("leaderboard").innerHTML = html;
+}
+
+const { data: allUsers } = await client
+.from("users")
+.select("id, first_name, xp, level")
+.order("xp", { ascending:false });
+
+if(allUsers){
+
+const myIndex = allUsers.findIndex(u => String(u.id) === String(telegramUser));
+
+if(myIndex >= 0){
+
+const me = allUsers[myIndex];
+
+document.getElementById("myrank").innerHTML = `
+🏅 Platz #${myIndex+1}<br>
+⭐ Level ${me.level || 1} • XP ${me.xp || 0}
+`;
+}
+
+}
+
+}catch(err){ console.log(err); }
+
+}
+
+loadUser();
+loadLeaderboard();
+loadDaily();
+renderDeals();
+
+/* COPY */
+function copyLink(){
+
+const el = document.getElementById("reflink");
+el.select();
+document.execCommand("copy");
+alert("Link kopiert!");
+}
+
+window.openAvatarPicker = function(){
+
+const picker =
+document.getElementById("avatarPicker");
+
+picker.style.display =
+picker.style.display === "block"
+? "none"
+: "block";
+
+};
+
+window.selectAvatar = async function(avatarKey){
+
+await client
+.from("users")
+.update({
+avatar: avatarKey
+})
+.eq("id", String(telegramUser));
+
+loadUser();
+
+document.getElementById("avatarPicker").style.display = "none";
+
+};
+const slotSymbols = [
+"👑",
+"💎",
+"⚜️",
+"💰",
+"🎰"
+];
+window.spinSlot = async function(){
+const { data: u, error } = await client
+  .from("users")
+  .select("*")
+  .eq("id", String(telegramUser))
+  .maybeSingle();
+
+if (!u) {
+  resultEl.innerText = "User fehlt → wird erstellt...";
+
+  await client.from("users").insert({
+  id: String(telegramUser),
+    xp: 0,
+    level: 1,
+    slot_last_spin: null
+  });
+
+  return;
+}
+const btn = document.getElementById("spinBtn");
+const display = document.getElementById("slotDisplay");
+const resultEl = document.getElementById("slotResult");
+
+btn.disabled = true;
+spinLocked = true;
+
+try {
+
+  const { data: u, error } = await client
+  .from("users")
+  .select("slot_last_spin, xp")
+  .eq("id", String(telegramUser))
+  .maybeSingle();
+
+if (error) {
+  console.log("DB ERROR:", error);
+  resultEl.innerText = "DB Fehler";
+  spinLocked = false;
+  btn.disabled = false;
+  return;
+}
+
+if (!u) {
+  resultEl.innerText = "User nicht gefunden";
+  spinLocked = false;
+  btn.disabled = false;
+  return;
+}
+
+  const now = new Date();
+  const last = u.slot_last_spin ? new Date(u.slot_last_spin) : null;
+
+  if(last && (now - last) < 86400000){
+  const hoursLeft = Math.ceil((86400000 - (now - last)) / 3600000);
+  resultEl.innerText = `⏳ Warte noch ${hoursLeft}h`;
+
+  btn.disabled = true;
+  spinLocked = false; // nur hier freigeben
+  return;
+}
+
+  resultEl.innerText = "Spinning... 🎰";
+  display.classList.add("slot-rolling");
+
+  let counter = 0;
+
+  const interval = setInterval(() => {
+
+    display.innerText =
+      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]} ` +
+      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]} ` +
+      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]}`;
+
+    counter++;
+
+    if(counter > 32){
+      clearInterval(interval);
+      display.classList.remove("slot-rolling");
+
+      const final = [
+        slotSymbols[Math.floor(Math.random()*slotSymbols.length)],
+        slotSymbols[Math.floor(Math.random()*slotSymbols.length)],
+        slotSymbols[Math.floor(Math.random()*slotSymbols.length)]
+      ];
+
+      display.innerText = final.join(" ");
+
+      let xpGain = 0;
+      let msg = "🎰 Heute kein Gewinn";
+
+      if(final[0] === final[1] && final[1] === final[2]){
+        xpGain = 10;
+        msg = "👑 ROYAL JACKPOT\n💎 +10 XP";
+      }
+
+      resultEl.innerText = msg;
+
+      client
+        .from("users")
+        .update({
+          xp: (u?.xp || 0) + xpGain,
+          slot_last_spin: now.toISOString()
+        })
+        .eq("id", String(telegramUser))
+        .then(() => loadUser());
+
+      setTimeout(() => {
+  btn.disabled = false;
+  spinLocked = false;
+}, 1500);
+    }
+
+  }, 85);
+
+} catch(err){
+  console.log(err);
+  resultEl.innerText = "Fehler";
+
+  btn.disabled = false;
+  spinLocked = false;
+}
+
+}
+
+
+
+async function answerDaily(answer){
+
+const btns = document.querySelectorAll("#wm button");
+btns.forEach(b => b.disabled = true);
+
+const result = document.getElementById("dailyResult");
+
+try {
+
+const { error } = await client
+  .from("wm_daily_answers")
+  .insert({
+    user_id: String(telegramUser),
+    answer: answer
+  });
+
+if(error){
+
+  if(error.code === "23505"){
+    result.innerText = "⛔ Du hast heute schon geantwortet";
+  } else {
+    result.innerText = "❌ Fehler beim Speichern";
+    console.log(error);
+  }
+
+  return;
+}
+
+if(answer === "20"){
+await addWmPoints(telegramUser, 1);
+result.innerText = "✅ Richtig! +1 Punkt";
+}else{
+result.innerText = "❌ Falsch!";
+}
+
+} catch(err){
+console.log(err);
+result.innerText = "❌ Fehler";
+}
+
+setTimeout(() => {
+  btns.forEach(b => b.disabled = false);
+}, 1500);
+
+}
+
+async function addWmPoints(userId, points){
+
+const { data } = await client
+.from("wm_points")
+.select("*")
+.eq("user_id", String(userId))
+.single();
+
+if(!data){
+
+await client
+.from("wm_points")
+.insert({
+user_id: String(userId),
+points: points
+});
+
+} else {
+
+await client
+.from("wm_points")
+.update({
+points: (data.points || 0) + points
+})
+.eq("user_id", String(userId));
+
+}
+
+}
+
+
+
+window.loadWmMatches = async function(){
+
+  const container = document.getElementById("wmMatches");
+
+  try {
+
+    // 1. 🔥 HIER KOMMT DEIN TIPP-LOAD REIN
+    const { data: myTips } = await client
+      .from("wm_tips")
+      .select("*")
+      .eq("user_id", String(telegramUser));
+    function getTip(matchId){
+      return myTips?.find(t => String(t.match_id) === String(matchId));
+    }
+
+    // 2. MATCHES LADEN
+    const { data } = await client
+      .from("wm_matches")
+      .select("*")
+      .gt("start_time", new Date().toISOString())
+      .order("start_time", { ascending: true });
+
+    if(!data || data.length === 0){
+      container.innerHTML = "Keine Spiele vorhanden";
+      return;
+    }
+
+    let html = "";
+
+    // 3. 🔥 HIER IST DER WICHTIGE FIX IM LOOP
+    data.forEach(match => {
+
+      const tip = getTip(match.id); // 👈 DAS IST DER FEHLENDE PART
+
+      html += `
+        <div style="margin-bottom:18px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.4);">
+
+          <div style="font-size:12px;opacity:0.7;">
+            ${match.stage || "Spiel"}
+          </div>
+
+          <div style="
+          text-align:center;
+          margin-top:10px;
+          ">
+
+          <div style="
+          font-size:42px;
+          margin-bottom:10px;
+          ">
+          ${match.home_flag || ""} 🆚 ${match.away_flag || ""}
+          </div>
+
+<div style="
+font-size:20px;
+font-weight:900;
+">
+${match.home_team || "Home"}
+</div>
+
+<div style="
+margin:6px 0;
+opacity:0.7;
+">
+VS
+</div>
+
+<div style="
+font-size:20px;
+font-weight:900;
+">
+${match.away_team || "Away"}
+</div>
+
+</div>
+
+        <div style="
+          margin-top:4px;
+          font-size:12px;
+          opacity:0.8;
+        ">
+          📅 ${new Date(match.start_time).toLocaleDateString("de-DE")}
+          •
+          🕒 ${new Date(match.start_time).toLocaleTimeString("de-DE", {
+            hour: "2-digit",
+            minute: "2-digit"
+          })}
+</div>
+          ${match.home_score != null && match.away_score != null ? `
+          <div style="
+            margin-top:6px;
+            font-weight:700;
+            color:#ff6b2c;
+          ">
+            Ergebnis: ${match.home_score} : ${match.away_score}
+          </div>
+`         : ""}
+          <div style="
+           display:flex;
+           justify-content:center;
+           align-items:center;
+           gap:15px;
+           margin:18px 0;
+           ">
+            <input
+             id="home_${match.id}"
+             type="number"
+             placeholder="0"
+
+             style="
+             width:70px;
+             height:70px;
+
+             font-size:28px;
+             font-weight:900;
+
+             text-align:center;
+
+             border-radius:18px;
+             border:none;
+
+             background:rgba(255,255,255,0.12);
+             color:white;
+"
+             value="${tip?.home_tip || ""}">
+
+            <input
+             id="away_${match.id}"
+             type="number"
+             placeholder="0"
+
+             style="
+             width:70px;
+             height:70px;
+
+             font-size:28px;
+             font-weight:900;
+
+             text-align:center;
+
+             border-radius:18px;
+             border:none;
+
+             background:rgba(255,255,255,0.12);
+             color:white;
+"
+             value="${tip?.away_tip || ""}">
+          </div>
+
+          <button onclick="saveTip(${match.id})">
+            Tipp speichern
+          </button>
+
+          ${tip ? `
+<div style="
+margin-top:12px;
+
+padding:10px;
+
+border-radius:14px;
+
+background:
+rgba(0,255,120,0.12);
+
+border:
+1px solid rgba(0,255,120,0.25);
+
+font-weight:700;
+">
+
+✅ Tipp abgegeben
+
+<br><br>
+
+🎯 ${tip.home_tip} : ${tip.away_tip}
+
+</div>
+` : ""}
+
+        </div>
+      `;
+
+    });
+
+    container.innerHTML = html;
+
+  } catch(err){
+    console.log(err);
+    container.innerHTML = "Fehler beim Laden";
+  }
+}
+
+window.loadSpecialTips = async function(){
+
+const { data } = await client
+.from("wm_special_tips")
+.select("*")
+.eq("user_id", String(telegramUser))
+.single();
+
+if(!data) return;
+
+document.getElementById("mySpecialTips").innerHTML = `
+<b>🏆 Deine Sondertipps</b><br><br>
+
+🏆 Weltmeister: ${data.world_champion || "-"}<br>
+🇩🇪 Deutschland: ${data.germany_result || "-"}<br>
+⚽ Torschützenkönig: ${data.top_scorer || "-"}
+`;
+
+}
+
+window.saveTip = async function(matchId){
+
+const home = document.getElementById("home_" + matchId).value;
+const away = document.getElementById("away_" + matchId).value;
+
+if(home === "" || away === ""){
+alert("Bitte Tipp eingeben");
+return;
+}
+const { data: match } = await client
+.from("wm_matches")
+.select("*")
+.eq("id", matchId)
+.single();
+
+if(match && new Date(match.start_time) <= new Date()){
+alert("Dieses Spiel hat bereits begonnen");
+return;
+}
+
+// check ob schon getippt
+const { data } = await client
+.from("wm_tips")
+.select("*")
+.eq("user_id", String(telegramUser))
+.eq("match_id", matchId);
+
+if(data && data.length > 0){
+alert("Du hast dieses Spiel schon getippt");
+return;
+}
+
+// speichern
+await client
+.from("wm_tips")
+.insert({
+user_id: String(telegramUser),
+match_id: matchId,
+home_tip: parseInt(home),
+away_tip: parseInt(away),
+points: 0
+});
+
+alert("Tipp gespeichert!");
+
+await loadWmMatches();
+await loadWmLeaderboard();
+}
+async function calculateMatchPoints(matchId){
+
+  const { data: match } = await client
+    .from("wm_matches")
+    .select("*")
+    .eq("id", matchId)
+    .single();
+
+  if(!match || match.home_score == null || match.away_score == null) return;
+
+  // ❌ schon berechnet → raus
+  if(match.points_calculated) return;
+
+  const { data: tips } = await client
+    .from("wm_tips")
+    .select("*")
+    .eq("match_id", matchId);
+
+  if(!tips) return;
+
+  const realDiff = match.home_score - match.away_score;
+
+  for(const tip of tips){
+
+    let points = 0;
+    const tipDiff = tip.home_tip - tip.away_tip;
+
+    if(tip.home_tip === match.home_score && tip.away_tip === match.away_score){
+      points = 3;
+    }
+    else if(
+      (realDiff > 0 && tipDiff > 0) ||
+      (realDiff < 0 && tipDiff < 0) ||
+      (realDiff === 0 && tipDiff === 0)
+    ){
+      points = 1;
+    }
+
+    await addWmPoints(tip.user_id, points);
+  }
+
+  // ✅ markieren als fertig
+  await client
+    .from("wm_matches")
+    .update({ points_calculated: true })
+    .eq("id", matchId);
+}
+
+async function setMatchResult(matchId, homeScore, awayScore) {
+
+  await client
+    .from("wm_matches")
+    .update({
+      home_score: homeScore,
+      away_score: awayScore
+    })
+    .eq("id", matchId);
+
+  await calculateMatchPoints(matchId); // 👈 HIER hin
+}
+
+window.loadWmLeaderboard = async function(){
+
+  try {
+
+    const { data } = await client
+      .from("wm_points")
+      .select("user_id, points")
+      .order("points", { ascending:false })
+      .limit(10);
+
+    const container = document.getElementById("wmLeaderboard");
+
+    if(!data || data.length === 0){
+      container.innerHTML = "Noch keine Punkte";
+      return;
+    }
+
+    let html = "";
+
+    data.forEach((u, i) => {
+
+      const hiddenId = String(u.user_id).slice(0,3) + "****";
+
+      html += `
+        <div style="margin-bottom:10px;">
+          <b>#${i+1}</b> • ${hiddenId}<br>
+          ⭐ ${u.points || 0} Punkte
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    // 👉 eigene Platzierung
+    const all = await client
+      .from("wm_points")
+      .select("user_id, points")
+      .order("points", { ascending:false });
+
+    if(all.data){
+
+      const myIndex = all.data.findIndex(
+        u => String(u.user_id) === String(telegramUser)
+      );
+
+      if(myIndex >= 0){
+
+        const me = all.data[myIndex];
+
+        document.getElementById("myWmRank").innerHTML = `
+          🏅 Platz #${myIndex+1}<br>
+          ⭐ ${me.points || 0} Punkte
+        `;
+      }
+    }
+
+  } catch(err){
+    console.log(err);
+  }
+}
+
+window.saveSpecialTips = async function(){
+
+const result = document.getElementById("specialTipsResult");
+
+const { data } = await client
+.from("wm_special_tips")
+.select("*")
+.eq("user_id", String(telegramUser));
+
+if(data && data.length > 0){
+result.innerHTML = "⛔ Bereits abgegeben";
+return;
+}
+
+let topScorer = document.getElementById("topScorer").value;
+
+if(topScorer === "Anderer Spieler"){
+topScorer = document.getElementById("otherTopScorer").value;
+}
+
+await client
+.from("wm_special_tips")
+.insert({
+
+user_id: String(telegramUser),
+
+world_champion:
+document.getElementById("worldChampion").value,
+
+germany_result:
+document.getElementById("germanyResult").value,
+
+top_scorer: topScorer
+
+});
+
+result.innerHTML = "✅ Sondertipps gespeichert";
+
+await loadSpecialTips();
+
+}
+
+document.getElementById("topScorer").addEventListener("change", function(){
+
+const field = document.getElementById("otherTopScorer");
+
+if(this.value === "Anderer Spieler"){
+field.style.display = "block";
+}else{
+field.style.display = "none";
+}
+
+});
+setInterval(async () => {
+
+  const { data } = await client
+    .from("wm_matches")
+    .select("*")
+    .eq("points_calculated", false);
+
+  if(!data) return;
+
+  for(const match of data){
+
+    if(match.home_score != null && match.away_score != null){
+      await calculateMatchPoints(match.id);
+    }
+
+  }
+
+}, 10000);
+
+window.loadPastMatches = async function(){
+
+  const container = document.getElementById("pastMatches");
+
+  try{
+
+    const { data: matches } = await client
+      .from("wm_matches")
+      .select("*")
+      .lt("start_time", new Date().toISOString())
+      .order("start_time", { ascending:false });
+
+    const { data: myTips } = await client
+      .from("wm_tips")
+      .select("*")
+      .eq("user_id", String(telegramUser));
+
+    if(!matches || matches.length === 0){
+      container.innerHTML = "Keine vergangenen Spiele";
+      return;
+    }
+
+    let html = "";
+
+    matches.forEach(match => {
+
+      const tip = myTips?.find(
+        t => String(t.match_id) === String(match.id)
+      );
+
+      html += `
+        <div class="card">
+
+          <div style="font-weight:900;">
+            ${match.home_flag || ""} ${match.home_team}
+            vs
+            ${match.away_flag || ""} ${match.away_team}
+          </div>
+
+          <div style="margin-top:8px;">
+            🏆 Ergebnis:
+            <b>${match.home_score ?? "-"} : ${match.away_score ?? "-"}</b>
+          </div>
+
+          <div style="margin-top:8px;">
+            🎯 Dein Tipp:
+            <b>
+              ${
+                tip
+                ? `${tip.home_tip} : ${tip.away_tip}`
+                : "Nicht getippt"
+              }
+            </b>
+          </div>
+
+          <div style="margin-top:8px;">
+            ⭐ Punkte:
+            <b>${tip?.points || 0}</b>
+          </div>
+
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+  }catch(err){
+    console.log(err);
+    container.innerHTML = "Fehler beim Laden";
+  }
+}
+function renderDeals(){
+
+const container = document.getElementById("dealContainer");
+
+if(!container) return;
+
+container.innerHTML = "";
+
+deals.forEach(deal=>{
+
+container.innerHTML += `
+
+<div class="deal-card">
+
+<div class="deal-top">
+
+<img
+class="deal-logo"
+src="${deal.logo}"
+alt="${deal.name}">
+
+<div class="deal-badge">
+${deal.badge}
+</div>
+
+</div>
+
+<div class="deal-title">
+🎰 ${deal.name}
+</div>
+
+<div class="deal-text">
+
+<b>${deal.bonus}</b>
+
+<br><br>
+
+${deal.details.join("<br>")}
+
+</div>
+
+<button class="deal-btn"
+onclick="window.open('${deal.link}','_blank')">
+
+JETZT SPIELEN
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}	
+}
+</script>
+
+</body>
+</html>
