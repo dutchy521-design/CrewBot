@@ -28,7 +28,9 @@ ADMIN_ID = ADMIN_IDS[0]
 admin_search_mode = {}
 admin_deposit_mode = {}
 bot = telebot.TeleBot(TOKEN)
+import logging
 
+telebot.logger.setLevel(logging.DEBUG)
 def main_menu():
 
     markup = types.ReplyKeyboardMarkup(
@@ -904,9 +906,8 @@ if __name__ == "__main__":
                 long_polling_timeout=20
             )
 
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-
-            print(">>> Neustart in 5 Sekunden...")
-            time.sleep(5)
+            except Exception:
+                import traceback
+                traceback.print_exc()
+                print(">>> Neustart in 5 Sekunden...")
+                time.sleep(5)
