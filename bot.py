@@ -890,9 +890,23 @@ if __name__ == "__main__":
     if os.getenv("RUN_MAIN") == "true":
         sys.exit()
 
-    flask_thread = threading.Thread(target=run, daemon=True)
+    flask_thread = threading.Thread(target=run)
+    flask_thread.daemon = True
     flask_thread.start()
 
-    print(">>> Polling wird gestartet...")
+    while True:
+        try:
+            print(">>> Polling gestartet...")
 
-    bot.infinity_polling(skip_pending=True)
+            bot.infinity_polling(
+                skip_pending=True,
+                timeout=20,
+                long_polling_timeout=20
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+
+            print(">>> Neustart in 5 Sekunden...")
+            time.sleep(5)

@@ -1,4 +1,4 @@
-pyTelegramBotAPI
+pyTelegramBotAPI==4.27.0
 Flask
 supabase
 python-dotenv
