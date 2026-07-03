@@ -394,58 +394,29 @@ def deals_button(message):
 
     markup.add(
         types.InlineKeyboardButton(
-            "🥇 Rooli",
-            url="https://rooli.live/aaonnulcsq"
+            "🔥 SpinBoss",
+            url="https://spbs.lynmonkel.com/?mid=374972_2187035"
         )
     )
 
     markup.add(
         types.InlineKeyboardButton(
-            "🎰 Lucky Capone",
-            url="https://track.velvet.partners/visit/?bta=35830&brand=LUCKYCAPONE&nci=5420&afp10=Telegram"
+            "🎰 Wintino",
+            url="https://wtno.pslera.com/?mid=376790_2195828"
         )
     )
 
     markup.add(
         types.InlineKeyboardButton(
-            "🎲 ColdBet",
-            url="https://coldb4.com/CASHOUTCREW"
+            "🆕 Reelson",
+            url="https://reelson.live/tzkkgjhuq"
         )
     )
 
-    markup.add(
-        types.InlineKeyboardButton(
-            "🔥 Winbeatz",
-            url="https://track.spartaaffiliates.com/visit/?bta=36880&nci=5472&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "⚡ Thorfortune",
-            url="https://track.spartaaffiliates.com/visit/?bta=36880&nci=5647&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "💎 Gambloria",
-            url="https://track.velvet.partners/visit/?bta=35830&brand=GAMBLORIA&nci=5344&afp10=Telegram"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "🎯 PlayJonny",
-            url="https://track.spartaaffiliates.com/visit/?bta=36880&nci=5345&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "🎡 Roulettino",
-            url="https://track.spartaaffiliates.com/visit/?bta=36880&nci=5386&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
-        )
+    bot.send_message(
+        message.chat.id,
+        "🎁 Cashout Crew Deals\n\nWähle dein Casino:",
+        reply_markup=markup
     )
 
     bot.send_message(
