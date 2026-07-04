@@ -21,7 +21,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 TOKEN = os.getenv("TOKEN")
 ADMIN_IDS = [
     184339844,
-    8206017051
+    8206017051,
+    5881431845
 ]
 ADMIN_ID = ADMIN_IDS[0]
 

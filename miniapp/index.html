@@ -1577,7 +1577,7 @@ style="width:100%;margin-bottom:10px;display:none;">
 
 <img
 id="avatarimg"
-src="https://i.imgur.com/OVNr24y.jpeg"
+src="https://i.imgur.com/jJOi0gP.jpeg"
 style="
 width:110px;
 height:110px;
@@ -1610,7 +1610,7 @@ gap:10px;
 ">
 
 <img
-src="https://i.imgur.com/OVNr24y.jpeg"
+src="https://i.imgur.com/hAnb2Cx.jpeg"
 onclick="selectAvatar('avatar1')"
 style="
 width:70px;
@@ -1621,7 +1621,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/HDpf0Hd.jpeg"
+src="https://i.imgur.com/IjnsYOf.jpeg"
 onclick="selectAvatar('avatar2')"
 style="
 width:70px;
@@ -1632,7 +1632,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/PlLyR7g.jpeg"
+src="https://i.imgur.com/rGpnmrB.jpeg"
 onclick="selectAvatar('avatar3')"
 style="
 width:70px;
@@ -1643,7 +1643,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/ECLtpUT.jpeg"
+src="https://i.imgur.com/aGU9BiM.jpeg"
 onclick="selectAvatar('avatar4')"
 style="
 width:70px;
@@ -1654,7 +1654,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/PLGaEGF.jpeg"
+src="https://i.imgur.com/otXXadk.jpeg"
 onclick="selectAvatar('avatar5')"
 style="
 width:70px;
@@ -1665,7 +1665,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/NJDPVhe.jpeg"
+src="https://i.imgur.com/IiIgDHW.jpeg"
 onclick="selectAvatar('avatar6')"
 style="
 width:70px;
@@ -1676,7 +1676,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/wJGn4wY.jpeg"
+src="https://i.imgur.com/uR8yf5O.jpeg"
 onclick="selectAvatar('avatar7')"
 style="
 width:70px;
@@ -1687,7 +1687,7 @@ cursor:pointer;
 ">
 
 <img
-src="https://i.imgur.com/DzU6EZ4.jpeg"
+src="https://i.imgur.com/r8oyvnA.jpeg"
 onclick="selectAvatar('avatar8')"
 style="
 width:70px;
@@ -1720,6 +1720,18 @@ Neuling
 
 </div>
 
+<img
+id="rankimg"
+src=""
+style="
+width:100%;
+max-width:340px;
+display:block;
+margin:20px auto;
+border-radius:18px;
+box-shadow:0 0 25px rgba(255,215,0,.25);
+">
+
 <div style="
 text-align:center;
 margin-top:15px;
@@ -1731,6 +1743,7 @@ Level 1
 </span>
 
 </div>
+
 
 <div class="xp-bar" style="margin-top:18px;">
 <div class="xp-fill" id="xpfillprofile"></div>
@@ -1748,7 +1761,7 @@ opacity:.75;
 
 </div>
 </div>
-</div>
+
 
 <div class="card">
 
@@ -1941,16 +1954,46 @@ console.log("telegramUser:", telegramUser);
 
 /* LEVEL SYSTEM */
 const levelData = {
-1:{ name:"👋 Neuling" },
-2:{ name:"🎁 Bonusjäger" },
-3:{ name:"💰 Sammler" },
-4:{ name:"🎰 Stammspieler" },
-5:{ name:"🍀 Glückspilz" },
-6:{ name:"💎 VIP" },
-7:{ name:"⭐ Profi" },
-8:{ name:"🔥 Elite" },
-9:{ name:"👑 Legende" },
-10:{ name:"🏆 CrewBoss" }
+1: {
+    name: "👋 Neuling",
+    img: "https://i.imgur.com/ajT0pl4.jpeg"
+},
+2: {
+    name: "🎁 Bonusjäger",
+    img: "https://i.imgur.com/QCHREWk.jpeg"
+},
+3: {
+    name: "💰 Sammler",
+    img: "https://i.imgur.com/xAPoajv.jpeg"
+},
+4: {
+    name: "🎰 Stammspieler",
+    img: "https://i.imgur.com/ZDVEznP.jpeg"
+},
+5: {
+    name: "🍀 Glückspilz",
+    img: "https://i.imgur.com/pHX0LSt.jpeg"
+},
+6: {
+    name: "💎 VIP",
+    img: "https://i.imgur.com/sI8NJlV.jpeg"
+},
+7: {
+    name: "⭐ Profi",
+    img: "https://i.imgur.com/bEK9JAp.jpeg"
+},
+8: {
+    name: "🔥 Elite",
+    img: "https://i.imgur.com/BzGdcsL.jpeg"
+},
+9: {
+    name: "👑 Legende",
+    img: "https://i.imgur.com/TTcvml2.jpeg"
+},
+10: {
+    name: "🏆 CrewBoss",
+    img: "https://i.imgur.com/VtasL2B.jpeg"
+}
 };
 
 /* SUPABASE */
@@ -1961,15 +2004,15 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const avatarUrls = {
 
-avatar1:"https://i.imgur.com/OVNr24y.jpeg",
-avatar2:"https://i.imgur.com/HDpf0Hd.jpeg",
-avatar3:"https://i.imgur.com/PlLyR7g.jpeg",
-avatar4:"https://i.imgur.com/ECLtpUT.jpeg",
+avatar1:"https://i.imgur.com/hAnb2Cx.jpeg",
+avatar2:"https://i.imgur.com/IjnsYOf.jpeg",
+avatar3:"https://i.imgur.com/rGpnmrB.jpeg",
+avatar4:"https://i.imgur.com/aGU9BiM.jpeg",
 
-avatar5:"https://i.imgur.com/PLGaEGF.jpeg",
-avatar6:"https://i.imgur.com/NJDPVhe.jpeg",
-avatar7:"https://i.imgur.com/wJGn4wY.jpeg",
-avatar8:"https://i.imgur.com/DzU6EZ4.jpeg"
+avatar5:"https://i.imgur.com/otXXadk.jpeg",
+avatar6:"https://i.imgur.com/IiIgDHW.jpeg",
+avatar7:"https://i.imgur.com/uR8yf5O.jpeg",
+avatar8:"https://i.imgur.com/r8oyvnA.jpeg"
 
 };
 async function loadUser(){
@@ -2059,6 +2102,9 @@ document.getElementById("nextlevel").innerText =
 
 document.getElementById("rankname").innerText =
 levelData[level]?.name || "🏆 CrewBoss";
+
+document.getElementById("rankimg").src =
+levelData[level]?.img || levelData[10].img;
 
 document.getElementById("invitecount").innerText =
 user.invites || 0;
