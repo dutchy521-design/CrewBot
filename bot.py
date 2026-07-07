@@ -262,6 +262,32 @@ def callback(call):
 
     chat_id = call.message.chat.id
 
+    if call.data.startswith("xp_menu_"):
+
+    req_id = call.data.split("_")[2]
+
+    markup = types.InlineKeyboardMarkup(row_width=2)
+
+    markup.add(
+        types.InlineKeyboardButton("🟢 +10 XP", callback_data=f"xp10_{req_id}"),
+        types.InlineKeyboardButton("🟡 +25 XP", callback_data=f"xp25_{req_id}")
+    )
+
+    markup.add(
+        types.InlineKeyboardButton("🟠 +50 XP", callback_data=f"xp50_{req_id}"),
+        types.InlineKeyboardButton("🔴 +100 XP", callback_data=f"xp100_{req_id}")
+    )
+
+    bot.edit_message_reply_markup(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=markup
+    )
+
+    bot.answer_callback_query(call.id)
+
+    return
+
     if call.data.startswith("xp_yes_"):
         req_id = call.data.split("_")[2]
         data = pending_xp_requests.get(req_id)
