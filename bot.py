@@ -339,7 +339,7 @@ def callback(call):
         data = pending_xp_requests.get(req_id)
 
         if not data:
-            bot.answer_callback_query(call.id, "❌ Anfrage nicht gefunden")
+            bot.answer_callback_query(call.id, "ℹ️ Anfrage bereits bearbeitet.")
             return
 
         user_id = data["user_id"]
@@ -359,7 +359,13 @@ def callback(call):
             user_id,
             f"💳 Einzahlung bestätigt\n⭐ +{xp} XP"
         )
-
+        
+        bot.edit_message_caption(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            caption=call.message.caption + f"\n\n✅ {xp} XP vergeben",
+            reply_markup=None
+        )
         pending_xp_requests.pop(req_id, None)
 
         return
