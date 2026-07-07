@@ -75,6 +75,7 @@ def get_level_name(level):
     return levels.get(level, "🏆 CrewBoss")
 
 def get_level(xp):
+    print(f"GET_LEVEL wurde aufgerufen mit XP={xp}")
 
     if xp >= 40000:
         return 10
