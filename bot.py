@@ -74,6 +74,28 @@ def get_level_name(level):
     }
     return levels.get(level, "🏆 CrewBoss")
 
+def get_level(xp):
+
+    if xp >= 40000:
+        return 10
+    elif xp >= 30000:
+        return 9
+    elif xp >= 22500:
+        return 8
+    elif xp >= 15000:
+        return 7
+    elif xp >= 10000:
+        return 6
+    elif xp >= 5000:
+        return 5
+    elif xp >= 2000:
+        return 4
+    elif xp >= 750:
+        return 3
+    elif xp >= 250:
+        return 2
+
+    return 1
 # ---------------- HELPERS ----------------
 def generate_code():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
@@ -111,7 +133,7 @@ def add_xp(user_id, amount):
 
     old_level = int(user.get("level", 1))
     xp = int(user.get("xp", 0)) + amount
-    new_level = min((xp // 100) + 1, 10)
+    new_level = get_level(xp)
 
     update_user(user_id, {
         "xp": xp,
