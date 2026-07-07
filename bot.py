@@ -135,6 +135,8 @@ def add_xp(user_id, amount):
     xp = int(user.get("xp", 0)) + amount
     new_level = get_level(xp)
 
+    print(f"XP={xp} | OLD={old_level} | NEW={new_level}")
+
     update_user(user_id, {
         "xp": xp,
         "level": new_level
