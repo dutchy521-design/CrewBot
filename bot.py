@@ -376,9 +376,13 @@ def screenshot(message):
     }
 
     markup = types.InlineKeyboardMarkup()
+
     markup.add(
-        types.InlineKeyboardButton("✅ XP", callback_data=f"xp_yes_{req_id}"),
-        types.InlineKeyboardButton("❌", callback_data=f"xp_no_{req_id}")
+        types.InlineKeyboardButton("💰 XP vergeben", callback_data=f"xp_menu_{req_id}")
+    )
+
+    markup.add(
+        types.InlineKeyboardButton("❌ Ablehnen", callback_data=f"xp_no_{req_id}")
     )
 
     for admin_id in ADMIN_IDS:
