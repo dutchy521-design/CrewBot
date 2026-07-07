@@ -242,7 +242,7 @@ def start(message):
                     "invite_list": invite_list
                 })
 
-                add_xp(inviter_id, 10)
+                add_xp(inviter_id, 20)
 
                 update_user(message.from_user.id, {"used_ref": ref})
 
