@@ -312,6 +312,57 @@ def callback(call):
 
         pending_xp_requests.pop(req_id, None)
         return
+    
+    if (
+        call.data.startswith("xp10_")
+        or call.data.startswith("xp25_")
+        or call.data.startswith("xp50_")
+        or call.data.startswith("xp100_")
+    ):
+
+        if call.data.startswith("xp10_"):
+            xp = 10
+            req_id = call.data.split("_")[1]
+
+        elif call.data.startswith("xp25_"):
+            xp = 25
+            req_id = call.data.split("_")[1]
+
+        elif call.data.startswith("xp50_"):
+            xp = 50
+            req_id = call.data.split("_")[1]
+
+        else:
+            xp = 100
+            req_id = call.data.split("_")[1]
+
+        data = pending_xp_requests.get(req_id)
+
+        if not data:
+            bot.answer_callback_query(call.id, "❌ Anfrage nicht gefunden")
+            return
+
+        user_id = data["user_id"]
+        note = data["note"]
+
+        add_xp(user_id, xp)
+
+        supabase.table("notes").insert({
+            "user_id": user_id,
+            "note": note,
+            "date": datetime.now().strftime("%d.%m.%Y %H:%M")
+        }).execute()
+
+        bot.answer_callback_query(call.id, f"✅ {xp} XP vergeben")
+
+        bot.send_message(
+            user_id,
+            f"💳 Einzahlung bestätigt\n⭐ +{xp} XP"
+        )
+
+        pending_xp_requests.pop(req_id, None)
+
+        return
 
     if call.data.startswith("xp_no_"):
         req_id = call.data.split("_")[2]
