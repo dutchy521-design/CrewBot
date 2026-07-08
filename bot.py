@@ -54,6 +54,7 @@ def home():
 
 # ---------------- MEMORY ----------------
 pending_xp_requests = {}
+pending_manual_xp = {}
 
 # ---------------- LEVEL NAMES ----------------
 def get_level_name(level):
@@ -274,6 +275,10 @@ def callback(call):
             types.InlineKeyboardButton("🟠 +50 XP", callback_data=f"xp50_{req_id}"),
             types.InlineKeyboardButton("🔴 +100 XP", callback_data=f"xp100_{req_id}")
         )
+        
+        markup.add(
+            types.InlineKeyboardButton("✍️ Andere", callback_data=f"xp_other_{req_id}")
+        )
 
         bot.edit_message_reply_markup(
             chat_id=call.message.chat.id,
@@ -309,7 +314,20 @@ def callback(call):
 
         pending_xp_requests.pop(req_id, None)
         return
-    
+    if call.data.startswith("xp_other_"):
+
+        req_id = call.data.split("_")[2]
+
+        pending_manual_xp[call.from_user.id] = req_id
+
+        bot.send_message(
+            call.from_user.id,
+            "✍️ Bitte gib jetzt die gewünschte XP-Zahl ein.\n\nBeispiel:\n275"
+        )
+
+        bot.answer_callback_query(call.id)
+
+        return
     if (
         call.data.startswith("xp10_")
         or call.data.startswith("xp25_")
