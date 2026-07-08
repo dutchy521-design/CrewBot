@@ -446,6 +446,8 @@ def screenshot(message):
 
     note = message.caption or "Keine Notiz"
     username = message.from_user.username or "unknown"
+    first_name = message.from_user.first_name or "Unbekannt"
+    username = message.from_user.username
     timestamp = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     req_id = str(message.message_id)
@@ -470,7 +472,13 @@ def screenshot(message):
         bot.send_photo(
             admin_id,
             message.photo[-1].file_id,
-            caption=f"📸 Screenshot\n👤 @{username}\n🕒 {timestamp}\n\n💬 {note}",
+            caption=(
+            f"📸 Screenshot\n"
+            f"👤 {first_name}\n"
+            f"📱 {'@' + username if username else 'Kein Username'}\n"
+            f"🕒 {timestamp}\n\n"
+            f"💬 {note}"
+        ),
             reply_markup=markup
         )
 
