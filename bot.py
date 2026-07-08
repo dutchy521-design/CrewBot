@@ -34,12 +34,9 @@ import logging
 telebot.logger.setLevel(logging.DEBUG)
 def main_menu():
 
-    markup = types.ReplyKeyboardMarkup(
-        resize_keyboard=True
-    )
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
-    markup.row("👤 Profil", "🎁 Deals")
-    markup.row("📈 XP", "📸 Einzahlung posten")
+    markup.row("👤 Profil", "📸 Einzahlung posten")
     markup.row("🚀 Community")
 
     markup.row("🛠️ Admin")
@@ -495,50 +492,7 @@ def notes(message):
     bot.send_message(message.chat.id, text)
 
 # ---------------- XP ----------------
-@bot.message_handler(commands=["xp"])
-def xp(message):
-    user = get_user(message.from_user.id)
-    bot.send_message(
-        message.chat.id,
-        f"⭐ XP: {user['xp']}\n🏆 Level: {user['level']}\n🎖 Rang: {get_level_name(user['level'])}"
-    )
-@bot.message_handler(func=lambda m: m.text == "🎁 Deals")
-def deals_button(message):
 
-    markup = types.InlineKeyboardMarkup()
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "🔥 SpinBoss",
-            url="https://spbs.lynmonkel.com/?mid=374972_2187035"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "🎰 Wintino",
-            url="https://wtno.pslera.com/?mid=376790_2195828"
-        )
-    )
-
-    markup.add(
-        types.InlineKeyboardButton(
-            "🆕 Reelson",
-            url="https://reelson.live/tzkkgjhuq"
-        )
-    )
-
-    bot.send_message(
-        message.chat.id,
-        "🎁 Cashout Crew Deals\n\nWähle dein Casino:",
-        reply_markup=markup
-    )
-
-    bot.send_message(
-        message.chat.id,
-        "🎁 Cashout Crew Deals\n\nWähle dein Casino:",
-        reply_markup=markup
-    )
 @bot.message_handler(func=lambda m: m.text == "👤 Profil")
 def profile_button(message):
 
