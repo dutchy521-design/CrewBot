@@ -499,7 +499,53 @@ def screenshot(message):
         ),
             reply_markup=markup
         )
+@bot.message_handler(func=lambda message: message.from_user.id in pending_manual_xp)
+def manual_xp(message):
 
+    if not message.text.isdigit():
+        bot.reply_to(
+            message,
+            "❌ Bitte gib nur eine Zahl ein.\n\nBeispiel:\n275"
+        )
+        return
+
+    xp = int(message.text)
+
+    req_id = pending_manual_xp[message.from_user.id]
+
+    data = pending_xp_requests.get(req_id)
+
+    if not data:
+        bot.send_message(
+            message.chat.id,
+            "❌ Anfrage wurde bereits bearbeitet."
+        )
+        pending_manual_xp.pop(message.from_user.id, None)
+        return
+
+    user_id = data["user_id"]
+    note = data["note"]
+
+    add_xp(user_id, xp)
+
+    supabase.table("notes").insert({
+        "user_id": user_id,
+        "note": note,
+        "date": datetime.now().strftime("%d.%m.%Y %H:%M")
+    }).execute()
+
+    bot.send_message(
+        user_id,
+        f"💳 Einzahlung bestätigt\n⭐ +{xp} XP"
+    )
+
+    bot.send_message(
+        message.chat.id,
+        f"✅ {xp} XP erfolgreich vergeben."
+    )
+
+    pending_xp_requests.pop(req_id, None)
+    pending_manual_xp.pop(message.from_user.id, None)
 # ---------------- NOTES ----------------
 @bot.message_handler(commands=["notes"])
 def notes(message):
