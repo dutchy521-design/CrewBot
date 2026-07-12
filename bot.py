@@ -142,6 +142,20 @@ def add_xp(user_id, amount):
     })
 
     if new_level > old_level:
+        
+        reward_result = (
+            supabase
+            .table("community_rewards")
+            .select("reward")
+            .eq("level", new_level)
+            .eq("active", True)
+            .execute()
+        )
+
+        reward = "Keine Belohnung"
+
+        if reward_result.data:
+            reward = reward_result.data[0]["reward"]
 
         if new_level == 10:
             bot.send_message(
@@ -153,12 +167,12 @@ def add_xp(user_id, amount):
                 user_id,
                 f"""🎉 Levelaufstieg!
 
-                ⭐ Du hast Level {new_level} erreicht!
+      ⭐ Du hast Level {new_level} erreicht!
 
-                🏆 Neuer Rang:
-                {get_level_name(new_level)}
-                """
-            )
+      🏆 Neuer Rang:
+      {get_level_name(new_level)}
+      """
+              )
 # ---------------- DAILY ----------------
 @bot.message_handler(commands=["daily"])
 def daily(message):

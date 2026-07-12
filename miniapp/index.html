@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>Royal Casino Hub</title>
+<title>Cashout CrewBot</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -415,53 +415,82 @@ opacity:0.7;
 
 .stat-box{
 
-background:rgba(255,255,255,.05);
+background:linear-gradient(
+180deg,
+rgba(255,255,255,.08),
+rgba(255,255,255,.03)
+);
 
-border:1px solid rgba(255,255,255,.08);
+border:1px solid rgba(255,215,0,.18);
 
-border-radius:18px;
+border-radius:24px;
 
-padding:18px 12px;
+padding:22px 15px;
 
 text-align:center;
 
 transition:.25s;
 
+box-shadow:
+0 8px 25px rgba(0,0,0,.30),
+0 0 15px rgba(255,215,0,.08);
+
+backdrop-filter:blur(8px);
+
 }
 
 .stat-box:hover{
 
-transform:translateY(-4px);
+transform:translateY(-6px) scale(1.03);
 
-background:rgba(255,255,255,.08);
+border-color:#ffd700;
+
+background:linear-gradient(
+180deg,
+rgba(255,255,255,.12),
+rgba(255,255,255,.05)
+);
+
+box-shadow:
+0 15px 35px rgba(0,0,0,.35),
+0 0 30px rgba(255,215,0,.25);
 
 }
 
 .stat-icon{
 
-font-size:28px;
+font-size:36px;
 
-margin-bottom:8px;
+margin-bottom:12px;
+
+filter:drop-shadow(0 0 10px rgba(255,215,0,.35));
 
 }
 
 .stat-value{
 
-font-size:24px;
+font-size:34px;
 
 font-weight:900;
 
 color:#ffd700;
 
+text-shadow:
+0 0 15px rgba(255,215,0,.35);
+
 }
 
 .stat-label{
 
-margin-top:6px;
+margin-top:10px;
 
 font-size:13px;
 
-opacity:.75;
+letter-spacing:1px;
+
+opacity:.7;
+
+text-transform:uppercase;
 
 }
 /* DEAL CARDS */
@@ -957,7 +986,35 @@ letter-spacing:1px;
   50% { transform: translateY(-6px); }
   100% { transform: translateY(0px); }
 }
+.highlight-frame{
 
+padding:4px;
+
+border-radius:22px;
+
+background:linear-gradient(
+135deg,
+#ffd700,
+#ffb300,
+#fff3a0
+);
+
+box-shadow:
+0 0 22px rgba(255,215,0,.25);
+
+margin-bottom:18px;
+
+}
+
+.highlight-img{
+
+display:block;
+
+width:100%;
+
+border-radius:18px;
+
+}
 .hero-card{
 
 background:rgba(25,20,55,.85);
@@ -1041,21 +1098,24 @@ font-size:15px;
 
 display:grid;
 
-grid-template-columns:1fr 1fr;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
 
-gap:16px;
-
-margin-top:25px;
+margin-top:24px;
 
 }
 
 .dashboard-item{
 
-background:rgba(30,25,65,.85);
+background:linear-gradient(
+180deg,
+rgba(48,35,96,.95),
+rgba(30,22,60,.95)
+);
 
-border-radius:22px;
+border-radius:20px;
 
-padding:22px;
+padding:16px 10px;
 
 text-align:center;
 
@@ -1063,45 +1123,58 @@ cursor:pointer;
 
 transition:.25s;
 
-border:1px solid rgba(255,255,255,.06);
+border:1px solid rgba(255,215,0,.12);
 
 box-shadow:
-0 0 20px rgba(120,70,255,.15);
+0 10px 25px rgba(0,0,0,.35),
+0 0 15px rgba(255,215,0,.08);
 
 }
 
 .dashboard-item:hover{
 
-transform:translateY(-4px);
+transform:translateY(-5px);
+
+border-color:#ffd700;
 
 box-shadow:
-0 0 30px rgba(170,120,255,.35);
+0 15px 35px rgba(0,0,0,.40),
+0 0 25px rgba(255,215,0,.25);
 
 }
 
 .dash-icon{
 
-font-size:34px;
+width:58px;
+height:58px;
+
+object-fit:contain;
+
+display:block;
+
+margin:0 auto 12px;
 
 }
 
 .dash-title{
 
-margin-top:12px;
+font-size:15px;
 
-font-weight:bold;
+font-weight:800;
 
-font-size:18px;
+line-height:1.2;
 
 }
 
 .dash-sub{
 
-margin-top:6px;
+margin-top:5px;
 
-font-size:13px;
+font-size:11px;
 
-opacity:.7;
+opacity:.65;
+
+line-height:1.2;
 
 }
 
@@ -1190,9 +1263,37 @@ font-size:15px;
 
 .community-icon{
 
-font-size:60px;
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+.community-big-icon{
+
+width:80px;
+
+height:80px;
+
+object-fit:contain;
 
 filter:drop-shadow(0 0 18px rgba(255,215,0,.45));
+
+}
+
+.small-icon{
+
+width:38px;
+
+height:38px;
+
+object-fit:contain;
+
+vertical-align:middle;
+
+margin-right:8px;
 
 }
 </style>
@@ -1204,67 +1305,237 @@ filter:drop-shadow(0 0 18px rgba(255,215,0,.45));
 <div id="home" class="page active">
 <div class="hero-header">
 
-    <img src="https://i.imgur.com/20yat4W.png" class="hero-logo">
+<img
+src="https://i.imgur.com/20yat4W.png"
+class="hero-logo">
 
-    <div class="hero-title">
-        Willkommen bei
-    </div>
+<div style="
+font-size:13px;
+letter-spacing:4px;
+opacity:.65;
+text-transform:uppercase;
+margin-top:8px;
+">
 
-    <div class="hero-subtitle">
-        CASHOUT CREW
-    </div>
+WELCOME TO
 
-    <div class="hero-text">
-        Spiele • Community • Rewards
-    </div>
+</div>
+
+<div class="hero-subtitle"
+style="
+font-size:42px;
+margin-top:6px;
+">
+
+CASHOUT CREW
+
+</div>
+
+<div style="
+margin-top:18px;
+font-size:18px;
+font-weight:700;
+">
+
+👋 Willkommen zurück
+
+</div>
+
+<div style="
+margin-top:8px;
+opacity:.8;
+">
+
+Spiele • Gewinne • Community
+
+</div>
 
 </div>
 
 <div class="card hero-card">
 
-    <div class="hero-top">
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+">
 
-        <div>
-            <div class="hero-small">
-                Willkommen zurück 👋
-            </div>
+<div>
 
-            <div class="hero-level">
-                Level <span id="level">1</span>
-            </div>
-        </div>
+<div style="
+font-size:13px;
+letter-spacing:3px;
+text-transform:uppercase;
+opacity:.65;
+">
+DEIN FORTSCHRITT
+</div>
 
-        <div class="hero-rank">
-            Rookie
-        </div>
-
-    </div>
-
-    <div class="hero-xp">
-
-        <span id="xp">0</span> XP
-
-    </div>
-
-    <div class="xp-bar">
-
-        <div class="xp-fill" id="xpfill"></div>
-
-    </div>
-
-    <div id="nextlevel" class="hero-next">
-
-        Noch 100 XP bis Level 2
-
-    </div>
+<div style="
+font-size:34px;
+font-weight:900;
+margin-top:6px;
+color:#ffd700;
+text-shadow:0 0 18px rgba(255,215,0,.35);
+">
+⭐ Level <span id="level">1</span>
+</div>
 
 </div>
 
+<div style="
+font-size:58px;
+">
+👑
+</div>
+
+</div>
+
+<div style="
+font-size:18px;
+font-weight:700;
+margin-bottom:10px;
+">
+
+<span id="xp">0</span> XP gesammelt
+
+</div>
+
+<div class="xp-bar">
+
+<div
+class="xp-fill"
+id="xpfill">
+</div>
+
+</div>
+
+<div
+id="nextlevel"
+style="
+margin-top:14px;
+opacity:.8;
+font-size:15px;
+">
+
+Noch 100 XP bis Level 2
+
+</div>
+
+</div>
+<div class="card hero-card"
+
+style="cursor:pointer;">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+">
+
+<div>
+
+<div style="
+display:inline-block;
+padding:6px 14px;
+border-radius:999px;
+background:linear-gradient(90deg,#ffd700,#ffb300);
+color:#111;
+font-size:11px;
+font-weight:900;
+letter-spacing:2px;
+margin-bottom:10px;
+box-shadow:0 0 18px rgba(255,215,0,.25);
+">
+⭐ CREW HIGHLIGHT
+</div>
+
+<div style="
+font-size:30px;
+font-weight:900;
+line-height:1.1;
+color:white;
+margin-top:6px;
+">
+💰 Letzter Community Gewinn
+</div>
+
+</div>
+
+<div style="font-size:42px;">
+🏆
+</div>
+
+</div>
+
+<div class="highlight-frame">
+
+<a
+href="https://t.me/Wanted_Benj_or_a_Wild"
+target="_blank"
+style="display:block;">
+
+<img
+src="https://i.imgur.com/VppqAEX.jpeg"
+class="highlight-img">
+
+</a>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<div>
+
+<div style="
+font-size:30px;
+font-weight:900;
+color:#ffd700;
+">
+💰 5.994,00 €
+</div>
+
+<div style="
+margin-top:8px;
+opacity:.8;
+">
+👤 ScoutiMouti
+</div>
+
+<div style="
+margin-top:5px;
+opacity:.7;
+">
+🎰 Roulettino
+</div>
+
+</div>
+
+<button
+onclick="window.open('https://track.spartaaffiliates.com/visit/?bta=36880&nci=5386&afp1=%7Bsubid%7D&afp10=Telegram&utm_campaign=%7Bxx%7D','_blank')"
+style="
+height:48px;
+padding:0 18px;
+font-weight:900;
+cursor:pointer;
+">
+🎰 Jetzt spielen
+</button>
+
+</div>
+
+</div>
 <div class="dashboard-grid">
 
 <div class="dashboard-item" onclick="claimDaily()">
 
-<div class="dash-icon">🎁</div>
+<div class="dash-icon"><img src="icons/gift.png" class="dash-icon"></div>
 
 <div class="dash-title">
 Daily Bonus
@@ -1276,9 +1547,9 @@ Streak sammeln
 
 </div>
 
-<div class="dashboard-item" onclick="showPage('profile')">
+<div class="dashboard-item" onclick="show('profile')">
 
-<div class="dash-icon">🏆</div>
+<div class="dash-icon"><img src="icons/trophy.png" class="dash-icon"></div>
 
 <div class="dash-title">
 Mein Profil
@@ -1290,9 +1561,9 @@ XP & Level
 
 </div>
 
-<div class="dashboard-item" onclick="spinSlot()">
+<div class="dashboard-item" onclick="openSlot()">
 
-<div class="dash-icon">🎰</div>
+<div class="dash-icon"><img src="icons/jackpot.png" class="dash-icon"></div>
 
 <div class="dash-title">
 Slot
@@ -1304,19 +1575,6 @@ Drehe täglich
 
 </div>
 
-<div class="dashboard-item" onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
-
-<div class="dash-icon">👥</div>
-
-<div class="dash-title">
-Community
-</div>
-
-<div class="dash-sub">
-Jetzt beitreten
-</div>
-
-</div>
 
 </div>
 
@@ -1330,7 +1588,9 @@ onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
         </div>
 
         <div class="community-title">
-            👥 Cashout Crew
+            <img src="icons/comu.png" class="small-icon">
+
+             Cashout Crew
         </div>
 
         <div class="community-desc">
@@ -1341,7 +1601,7 @@ onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
     </div>
 
     <div class="community-icon">
-        💬
+        <img src="icons/chat.png" class="community-big-icon">
     </div>
 
 </div>
@@ -1359,7 +1619,7 @@ onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
         font-size:22px;
         font-weight:900;
       ">
-        🏆 WM Tippspiel
+        <img src="icons/worldcup.png" class="small-icon"> WM Tippspiel
       </div>
 
       <div style="
@@ -1372,14 +1632,14 @@ onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
     </div>
 
     <div style="font-size:42px;">
-      ⚽
+      <img src="icons/football.png" class="wm-icon">
     </div>
 
   </div>
 
 </div>
 
-<div class="card">
+<div class="card" id="slotCard">
 🎰 Slot Machine
 
 <div class="slot-wrapper">
@@ -1420,7 +1680,7 @@ Status: <b>Treasure Mode aktiv</b>
 <!-- WM -->
 <div id="wm" class="page">
 
-<h2>🏆 WM Tippspiel</h2>
+<h2><img src="icons/worldcup.png" class="small-icon"> WM Tippspiel</h2>
 <div class="card">
 
 <div style="
@@ -1575,28 +1835,55 @@ style="width:100%;margin-bottom:10px;display:none;">
 
 <div class="card" style="text-align:center;">
 
+<div style="
+font-size:13px;
+letter-spacing:3px;
+opacity:.65;
+margin-bottom:10px;
+text-transform:uppercase;
+">
+👑 CASHOUT CREW
+</div>
+
 <img
 id="avatarimg"
 src="https://i.imgur.com/jJOi0gP.jpeg"
 style="
-width:110px;
-height:110px;
+width:140px;
+height:140px;
 border-radius:50%;
 object-fit:cover;
-border:3px solid #ffd700;
-box-shadow:0 0 20px rgba(255,215,0,0.35);
-margin-bottom:12px;
+border:4px solid #ffd700;
+box-shadow:
+0 0 35px rgba(255,215,0,.35),
+0 0 70px rgba(255,0,255,.20);
+margin-bottom:15px;
 ">
 
 <div style="
-font-size:22px;
+font-size:30px;
 font-weight:900;
+margin-bottom:6px;
 ">
-<b id="username">Lädt...</b>
+
+<b id="username">
+Lädt...
+</b>
+
+</div>
+
+<div style="
+opacity:.7;
+font-size:14px;
+margin-bottom:18px;
+">
+
+Willkommen zurück!
+
 </div>
 
 <button onclick="openAvatarPicker()">
-🎭 Avatar auswählen
+🎭 Avatar wechseln
 </button>
 <div id="avatarPicker" style="
 display:none;
@@ -1704,7 +1991,31 @@ cursor:pointer;
 
 <div class="card">
 
-<h3>🏆 Dein Rang</h3>
+<div style="
+text-align:center;
+margin-bottom:20px;
+">
+
+<div style="
+font-size:13px;
+letter-spacing:3px;
+text-transform:uppercase;
+opacity:.6;
+">
+DEIN STATUS
+</div>
+
+<div style="
+font-size:34px;
+font-weight:900;
+color:#ffd700;
+margin-top:5px;
+text-shadow:0 0 15px rgba(255,215,0,.35);
+">
+🏆 CREW LEVEL
+</div>
+
+</div>
 
 <div style="
 font-size:28px;
@@ -1725,11 +2036,17 @@ id="rankimg"
 src=""
 style="
 width:100%;
-max-width:340px;
+max-width:390px;
 display:block;
-margin:20px auto;
-border-radius:18px;
-box-shadow:0 0 25px rgba(255,215,0,.25);
+margin:25px auto;
+border-radius:24px;
+border:2px solid rgba(255,215,0,.25);
+
+box-shadow:
+0 0 45px rgba(255,215,0,.30),
+0 0 80px rgba(255,0,255,.15);
+
+transition:.3s;
 ">
 
 <div style="
@@ -1744,28 +2061,107 @@ Level 1
 
 </div>
 
+<div
+id="nextreward"
+style="
+margin-top:18px;
+padding:12px;
+border-radius:12px;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,215,0,.25);
+">
 
-<div class="xp-bar" style="margin-top:18px;">
-<div class="xp-fill" id="xpfillprofile"></div>
+<div style="
+font-weight:700;
+color:#FFD54A;
+margin-bottom:8px;
+">
+🎁 Nächste Belohnung
+</div>
+
+<div id="rewardtitle"
+style="
+font-size:17px;
+font-weight:bold;
+margin-bottom:6px;
+">
+-
+</div>
+
+<div id="rewardtext"
+style="
+opacity:.85;
+font-size:14px;
+line-height:1.4;
+">
+-
+</div>
+
 </div>
 
 <div style="
-text-align:center;
-margin-top:10px;
-opacity:.75;
+margin-top:22px;
 ">
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:8px;
+font-size:14px;
+font-weight:700;
+opacity:.8;
+">
+
+<span>⭐ XP Fortschritt</span>
 
 <span id="profilexp">
 0 / 100 XP
 </span>
 
 </div>
+
+<div class="xp-bar">
+
+<div
+class="xp-fill"
+id="xpfillprofile">
+</div>
+
+</div>
+
 </div>
 
 
+</div>
+</div>
+
 <div class="card">
 
-<h3>👥 Freunde einladen</h3>
+<div style="
+text-align:center;
+margin-bottom:20px;
+">
+
+<div style="
+font-size:13px;
+letter-spacing:3px;
+text-transform:uppercase;
+opacity:.6;
+">
+COMMUNITY
+</div>
+
+<div style="
+font-size:30px;
+font-weight:900;
+color:#ffd700;
+margin-top:5px;
+text-shadow:0 0 15px rgba(255,215,0,.35);
+">
+👥 FREUNDE EINLADEN
+</div>
+
+</div>
 
 <div style="
 opacity:.85;
@@ -1857,7 +2253,12 @@ Lädt...
 
 <div style="margin-top:15px;">
 <b>📍 Deine Platzierung</b>
-<div id="myrank" style="margin-top:8px;opacity:0.9;">
+<div id="myrank"
+style="
+margin-top:8px;
+opacity:0.9;
+padding-bottom:120px;
+">
 Lädt...
 </div>
 </div>
@@ -1888,18 +2289,118 @@ details:[
 link:"https://spbs.lynmonkel.com/?mid=374972_2187035"
 },
 
+
 {
-name:"Wintino",
-domain:"wtno.pslera.com",
-badge:"HOT",
-bonus:"125% Non-Sticky",
+name:"DonBet",
+domain:"donbet.com",
+badge:"NEU",
+bonus:"150% Sticky Bonus + 50 Freispiele",
 details:[
-"🎰 35x D+B",
+"💰 30x Wager auf Einzahlung",
+"💰 Schnelle Auszahlung",
+"🎁 Bonus im Profil manuell aktivieren",
 "🎯 5€ Max Bet",
-"💰 10x Max Cashout"
+"🚫 Kein Max Cashout"
 ],
-link:"https://wtno.pslera.com/?mid=376790_2195828"
+link:"https://go.affiliatedonbet.com/visit/?bta=3170018&brand=donbet"
 },
+
+
+{
+name:"Stay Casino",
+domain:"stay.casino",
+badge:"TOP",
+bonus:"100% + 100 Freispiele",
+details:[
+"🎁 5 Einzahlungsboni + Freispiele",
+"💰 Alle Boni Sticky",
+"💎 10x Max Cashout im Bonus",
+"💳 Mindesteinzahlung 20€",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://staylinks.net/alvwtd3cx"
+},
+
+
+{
+name:"Richard Casino",
+domain:"richard.casino",
+badge:"TOP",
+bonus:"100% + 100 Freispiele",
+details:[
+"🎁 5 Einzahlungsboni + Freispiele",
+"💰 Alle Boni Sticky",
+"💎 10x Max Cashout im Bonus",
+"💳 Mindesteinzahlung 20€",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://www.rich-l.ink/aka2brptt"
+},
+
+
+{
+name:"PlayJonny",
+domain:"playjonny.com",
+badge:"TOP",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Bonus bis 500€",
+"💎 10x Max Cashout im Bonus",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5345&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+
+{
+name:"Roulettino",
+domain:"roulettino.com",
+badge:"TOP",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"💰 Bonus bis 500€",
+"💎 10x Max Cashout im Bonus",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://track.spartaaffiliates.com/visit/?bta=36880&nci=5386&afp1={subid}&afp10=Telegram&utm_campaign={xx}"
+},
+
+
+{
+name:"Gambloria",
+domain:"gambloria.com",
+badge:"NEU",
+bonus:"100% Non-Sticky bis 500€",
+details:[
+"🎰 Partner von LuckyCapone",
+"💰 Bonus bis 500€",
+"💎 10x Max Cashout im Bonus",
+"💳 Mindesteinzahlung 20€",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://track.velvet.partners/visit/?bta=35830&brand=GAMBLORIA&nci=5344&afp10=Telegram&sub_id_10=%7Bexternal_id%7D"
+},
+
+
+{
+name:"Rooli",
+domain:"rooli.live",
+badge:"TOP",
+bonus:"100% Sticky bis 500€",
+details:[
+"💰 Bonus bis 500€",
+"🏆 Max Cashout 5000€",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung"
+],
+link:"https://rooli.live/aaonnulcsq"
+},
+
 
 {
 name:"Reelson",
@@ -1930,6 +2431,7 @@ if(p === "wm"){
   loadWmLeaderboard();
   loadSpecialTips();
 }
+window.scrollTo(0, 0);
 }
 
 /* TELEGRAM */
@@ -1994,6 +2496,44 @@ const levelData = {
     name: "🏆 CrewBoss",
     img: "https://i.imgur.com/VtasL2B.jpeg"
 }
+};
+const levelRewards = {
+    2: {
+        title: "🎡 Glücksrad",
+        text: "5×25€ Guthaben (monatliche Auslosung)"
+    },
+    3: {
+        title: "💵 50€",
+        text: "Du erhältst 50€."
+    },
+    4: {
+        title: "🏆 Bonusbuy-Turnier",
+        text: "Chance auf 250€ (max. 4 Teilnehmer)."
+    },
+    5: {
+        title: "💵 200€",
+        text: "Du erhältst 200€."
+    },
+    6: {
+        title: "🔄 8 Reloads",
+        text: "8× Reload à 50€."
+    },
+    7: {
+        title: "🥊 Schlag den Bensch",
+        text: "Gewinne 500€."
+    },
+    8: {
+        title: "📅 Reload",
+        text: "100€ Reload monatlich für 6 Monate."
+    },
+    9: {
+        title: "💎 VIP Reload",
+        text: "200€ Reload monatlich für 6 Monate."
+    },
+    10: {
+        title: "👑 Boss-Challenge",
+        text: "1000€ + 1 Jahr Reload."
+    }
 };
 
 /* SUPABASE */
@@ -2060,6 +2600,23 @@ document.getElementById("username").innerText =
 user.first_name || "Unbekannt";
 const xp = user.xp || 0;
 const level = user.level || 1;
+const MAX_LEVEL = 10;
+
+const levelThresholds = {
+    1: 0,
+    2: 250,
+    3: 750,
+    4: 2000,
+    5: 5000,
+    6: 10000,
+    7: 15000,
+    8: 22500,
+    9: 30000,
+    10: 40000
+};
+
+const current = levelThresholds[level];
+const next = levelThresholds[level + 1];
 document.getElementById("leveltitle").innerHTML =
 `⭐ Level ${level}`;
 
@@ -2067,20 +2624,12 @@ document.getElementById("xp").innerText = xp;
 document.getElementById("level").innerText = level;
 document.getElementById("profillevel").innerText = level;
 document.getElementById("profilxp").innerText = xp;
-document.getElementById("profilexp").innerText = `${xp} XP`;
-const MAX_LEVEL = 10;
+if (level >= MAX_LEVEL) {
+    document.getElementById("profilexp").innerText = `${xp} / 40000 XP`;
+} else {
+    document.getElementById("profilexp").innerText = `${xp} / ${next} XP`;
+}
 
-if(level >= MAX_LEVEL){
-
-document.getElementById("xpfill").style.width = "100%";
-
-document.getElementById("nextlevel").innerText =
-"🏛️ Maximales Level erreicht";
-
-}else{
-
-const current = (level - 1) * 100;
-const next = level * 100;
 
 let progress =
 ((xp - current) / (next - current)) * 100;
@@ -2094,17 +2643,37 @@ document.getElementById("xpfill").style.width =
 progress + "%";
 document.getElementById("xpfillprofile").style.width =
 progress + "%";
-
+console.log(level, xp, current, next);
 document.getElementById("nextlevel").innerText =
 `${Math.max(0,next - xp)} XP bis Level ${level + 1}`;
 
-}
+
 
 document.getElementById("rankname").innerText =
 levelData[level]?.name || "🏆 CrewBoss";
 
 document.getElementById("rankimg").src =
 levelData[level]?.img || levelData[10].img;
+
+const reward = levelRewards[level + 1];
+
+if (reward) {
+
+    document.getElementById("rewardtitle").innerText =
+    `⭐ Level ${level + 1} - ${reward.title}`;
+
+    document.getElementById("rewardtext").innerText =
+    reward.text;
+
+} else {
+
+    document.getElementById("rewardtitle").innerText =
+    "👑 Höchstes Level erreicht";
+
+    document.getElementById("rewardtext").innerText =
+    "Du hast bereits alle Belohnungen freigeschaltet.";
+
+}
 
 document.getElementById("invitecount").innerText =
 user.invites || 0;
@@ -2321,11 +2890,13 @@ const myIndex = allUsers.findIndex(u => String(u.id) === String(telegramUser));
 if(myIndex >= 0){
 
 const me = allUsers[myIndex];
-
+console.log("myIndex:", myIndex, me);
+console.log("ICH BIN VOR MYRANK");
 document.getElementById("myrank").innerHTML = `
 🏅 Platz #${myIndex+1}<br>
 ⭐ Level ${me.level || 1} • XP ${me.xp || 0}
 `;
+console.log("MYRANK GESCHRIEBEN");
 }
 
 }
@@ -2473,7 +3044,7 @@ if (!u) {
 
       if(final[0] === final[1] && final[1] === final[2]){
         xpGain = 10;
-        msg = "👑 ROYAL JACKPOT\n💎 +10 XP";
+        msg = "👑 ROYAL JACKPOT\n💎 +50 XP";
       }
 
       resultEl.innerText = msg;
@@ -3128,8 +3699,16 @@ container.innerHTML += `
 
 <img
 class="deal-logo"
-src="${deal.logo}"
-alt="${deal.name}">
+src="https://icon.horse/icon/${deal.domain}"
+alt="${deal.name}"
+onerror="
+if(!this.dataset.fallback){
+    this.dataset.fallback='ddg';
+    this.src='https://icons.duckduckgo.com/ip3/${deal.domain}.ico';
+}else{
+    this.src='icons/casino.png';
+}
+">
 
 <div class="deal-badge">
 ${deal.badge}
@@ -3165,6 +3744,25 @@ JETZT SPIELEN
 });
 
 }	
+}
+
+function openSlot(){
+
+    show("home");
+
+    setTimeout(() => {
+
+        document.getElementById("slotCard").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        setTimeout(() => {
+            spinSlot();
+        }, 500);
+
+    }, 150);
+
 }
 </script>
 
