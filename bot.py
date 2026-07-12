@@ -19,6 +19,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ---------------- ENV ----------------
 TOKEN = os.getenv("TOKEN")
+
+
 ADMIN_IDS = [
     184339844,
     8206017051,
@@ -127,6 +129,23 @@ def get_user(user_id):
 def update_user(user_id, fields):
     supabase.table("users").update(fields).eq("id", str(user_id)).execute()
 
+def load_group_id():
+
+    data = (
+        supabase
+        .table("community_settings")
+        .select("group_id")
+        .limit(1)
+        .execute()
+    )
+
+    if data.data:
+        return data.data[0]["group_id"]
+
+    return None
+
+COMMUNITY_GROUP_ID = load_group_id()
+
 def add_xp(user_id, amount):
     user = get_user(user_id)
 
@@ -142,7 +161,7 @@ def add_xp(user_id, amount):
     })
 
     if new_level > old_level:
-        
+
         reward_result = (
             supabase
             .table("community_rewards")
@@ -157,22 +176,81 @@ def add_xp(user_id, amount):
         if reward_result.data:
             reward = reward_result.data[0]["reward"]
 
-        if new_level == 10:
+        bot.send_message(
+            user_id,
+            f"""🎉 LEVEL UP!
+
+🥳 Herzlichen Glückwunsch!
+
+⭐ Du hast Level {new_level} erreicht!
+
+🏆 Neuer Rang:
+{get_level_name(new_level)}
+
+🎁 Deine Belohnung:
+
+{reward}
+
+📩 Bitte melde dich bei einem Admin, um deine Belohnung zu erhalten.
+
+🍀 Vielen Dank, dass du Teil der Cashout Crew bist!
+"""
+        )
+
+        username = user.get("username") or "-"
+        first_name = user.get("first_name") or "Unbekannt"
+
+        for admin_id in ADMIN_IDS:
+
             bot.send_message(
-                user_id,
-                "🏆 Glückwunsch!\n\nDu hast den höchsten Rang der Cashout Crew erreicht!\n👑 CrewBoss"
+                admin_id,
+                f"""🚨 LEVEL UP
+
+👤 {first_name}
+
+📱 @{username}
+
+⭐ Level {new_level}
+
+🎁 Belohnung:
+
+{reward}
+
+🆔 Telegram-ID:
+{user_id}
+"""
             )
-        else:
+
+        if COMMUNITY_GROUP_ID:
+
+            community_messages = [
+
+                f"""🎉 LEVEL UP!
+
+🥳 {first_name} hat gerade Level {new_level} erreicht!
+
+🏆 Neuer Rang:
+{get_level_name(new_level)}
+
+👏 Herzlichen Glückwunsch! 🍀""",
+
+                f"""🚀 Community News!
+
+⭐ {first_name} hat soeben Level {new_level} erreicht!
+
+🎉 Lasst ein paar Glückwünsche da! ❤️""",
+
+                f"""🏆 Neuer Meilenstein!
+
+🎰 {first_name} ist jetzt Level {new_level}!
+
+👏 Weiter so! 🍀"""
+            ]
+
             bot.send_message(
-                user_id,
-                f"""🎉 Levelaufstieg!
-
-      ⭐ Du hast Level {new_level} erreicht!
-
-      🏆 Neuer Rang:
-      {get_level_name(new_level)}
-      """
-              )
+                COMMUNITY_GROUP_ID,
+                random.choice(community_messages)
+            )
 # ---------------- DAILY ----------------
 @bot.message_handler(commands=["daily"])
 def daily(message):
