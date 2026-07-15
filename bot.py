@@ -345,7 +345,7 @@ def start(message):
     bot.send_message(message.chat.id, "🔞 Bist du über 18 Jahre alt?", reply_markup=markup)
 
 # ---------------- CALLBACK ----------------
-CHANNEL = "@profitplaysports"
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
@@ -488,35 +488,24 @@ def callback(call):
         return
 
     if call.data == "age_yes":
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("📢 Zum Kanal", url="https://t.me/profitplaysports"))
-        markup.add(types.InlineKeyboardButton("✅ Ich bin beigetreten", callback_data="check_channel"))
-        bot.send_message(chat_id, "👉 Folgst du schon unserem Kanal?", reply_markup=markup)
-        return
-
-    if call.data == "check_channel":
-        try:
-            member = bot.get_chat_member(CHANNEL, call.from_user.id)
-            if member.status not in ["member", "administrator", "creator"]:
-                bot.send_message(chat_id, "❌ Nicht im Kanal.")
-                return
-        except:
-            bot.send_message(chat_id, "⚠️ Fehler.")
-            return
 
         user = get_user(chat_id)
         ref_link = f"https://t.me/Crew_1Bot?start={user['ref_code']}"
 
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("🚀 Mini App", web_app=types.WebAppInfo("https://crewbotminiapp.dutchy521.workers.dev/")))
-        markup.add(types.InlineKeyboardButton("📦 Deals öffnen", callback_data="open_deals"))
-
         bot.send_message(
             chat_id,
-            f"✅ Freigeschaltet\n\nHier dein persönlicher Einladungslink:\n{ref_link}",
-            reply_markup=main_menu()
-        )
+            f"""✅ Willkommen bei der Cashout Crew!
+
+    🔗 Dein persönlicher Einladungslink:
+
+    {ref_link}
+
+    Viel Spaß! 🍀""",
+           reply_markup=main_menu()
+       )
+
         return
+
     if call.data == "open_deals":
 
         markup = types.InlineKeyboardMarkup()
