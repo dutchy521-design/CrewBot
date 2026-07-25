@@ -1086,13 +1086,9 @@ def broadcast(message):
         try:
             user_id = user["id"]
             first_name = user.get("first_name") or "Crew-Mitglied"
-            final_text = f"""
-👋 Hallo {first_name},
+            final_text = f"""👋 Hallo {first_name},
 
-{text}
-
-🍀 Viel Glück!
-"""
+{text}"""
 
             bot.send_message(user_id, final_text)
 
