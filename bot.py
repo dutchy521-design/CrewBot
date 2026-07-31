@@ -87,13 +87,13 @@ def get_level(xp):
         return 7
     elif xp >= 10000:
         return 6
-    elif xp >= 5000:
+    elif xp >= 6000:
         return 5
-    elif xp >= 2000:
+    elif xp >= 3500:
         return 4
-    elif xp >= 750:
+    elif xp >= 1500:
         return 3
-    elif xp >= 250:
+    elif xp >= 500:
         return 2
 
     return 1
