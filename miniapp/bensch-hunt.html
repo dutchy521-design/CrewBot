@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <title>Bensch Hunt – Telegram Mini Game</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js?61"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --tg-bg: var(--tg-theme-bg-color, #0d1118);
+      --tg-text: var(--tg-theme-text-color, #ffffff);
+      --tg-hint: var(--tg-theme-hint-color, #a7b0bd);
+      --tg-button: var(--tg-theme-button-color, #f5b700);
+      --tg-button-text: var(--tg-theme-button-text-color, #141414);
+      --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #18202b);
+
+      --panel: color-mix(in srgb, var(--tg-secondary-bg) 93%, transparent);
+      --border: rgba(255,255,255,.10);
+      --gold: #ffd451;
+      --shadow: rgba(0,0,0,.30);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width:100%;
+      min-height:100%;
+      margin:0;
+      overflow:hidden;
+      overscroll-behavior:none;
+      user-select:none;
+      touch-action:manipulation;
+      color:var(--tg-text);
+      background:var(--tg-bg);
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    button { font:inherit; }
+
+    .app {
+      min-height:100svh;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding:
+        max(12px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-right))
+        max(12px, env(safe-area-inset-bottom))
+        max(12px, env(safe-area-inset-left));
+      background:
+        radial-gradient(circle at 10% 0%,rgba(255,215,0,.13),transparent 34%),
+        radial-gradient(circle at 95% 88%,rgba(255,0,255,.10),transparent 38%),
+        var(--tg-bg);
+    }
+
+    .game-toolbar {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .toolbar-button {
+      width:auto;
+      flex:1;
+      min-height:42px;
+      margin:0;
+      padding:9px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      color:var(--tg-text);
+      background:var(--panel);
+      box-shadow:0 6px 18px var(--shadow);
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .toolbar-button.icon {
+      flex:0 0 52px;
+      font-size:20px;
+      padding-left:8px;
+      padding-right:8px;
+    }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:7px;
+    }
+
+    .stat {
+      min-width:0;
+      padding:9px 5px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--panel);
+      box-shadow:0 8px 22px var(--shadow);
+      text-align:center;
+    }
+
+    .stat-label {
+      display:block;
+      margin-bottom:2px;
+      color:var(--tg-hint);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+
+    .stat-value {
+      display:block;
+      overflow:hidden;
+      font-size:clamp(17px,5vw,25px);
+      font-weight:950;
+      line-height:1.1;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .game-shell {
+      position:relative;
+      flex:1;
+      min-height:450px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:24px;
+      background:var(--panel);
+      box-shadow:
+        inset 0 0 45px rgba(0,0,0,.17),
+        0 12px 32px var(--shadow);
+    }
+
+    #gameCanvas {
+      display:block;
+      width:100%;
+      height:100%;
+      min-height:450px;
+      touch-action:none;
+      cursor:crosshair;
+    }
+
+    .overlay {
+      position:absolute;
+      inset:0;
+      z-index:20;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      background:rgba(7,10,15,.48);
+      backdrop-filter:blur(4px);
+    }
+
+    .overlay.hidden { display:none; }
+
+    .overlay-card {
+      width:min(92%,390px);
+      padding:22px 20px;
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:22px;
+      background:color-mix(in srgb,var(--tg-secondary-bg) 95%,transparent);
+      box-shadow:0 22px 52px rgba(0,0,0,.40);
+      text-align:center;
+    }
+
+    .game-icon {
+      display:grid;
+      width:74px;
+      height:74px;
+      margin:0 auto 13px;
+      place-items:center;
+      border:3px solid rgba(255,255,255,.28);
+      border-radius:22px;
+      background:linear-gradient(145deg,#ffe47a,#e2a000);
+      color:#5c3c00;
+      box-shadow:
+        inset 0 0 0 5px rgba(102,66,0,.16),
+        0 10px 24px rgba(245,183,0,.25);
+      font-size:37px;
+      transform:rotate(-4deg);
+    }
+
+    h1 {
+      margin:0 0 8px;
+      font-size:clamp(25px,7vw,37px);
+      line-height:1;
+    }
+
+    .description {
+      margin:0 0 16px;
+      color:var(--tg-hint);
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .result {
+      margin:-2px 0 10px;
+      color:var(--gold);
+      font-size:24px;
+      font-weight:950;
+    }
+
+    .primary-button,
+    .secondary-button {
+      width:100%;
+      min-height:50px;
+      padding:12px 18px;
+      border-radius:15px;
+      font-weight:950;
+      cursor:pointer;
+    }
+
+    .primary-button {
+      border:0;
+      color:var(--tg-button-text);
+      background:var(--tg-button);
+      box-shadow:0 9px 24px color-mix(in srgb,var(--tg-button) 28%,transparent);
+    }
+
+    .secondary-button {
+      border:1px solid var(--border);
+      color:var(--tg-text);
+      background:rgba(255,255,255,.06);
+    }
+
+    .helper {
+      color:var(--tg-hint);
+      font-size:12px;
+      line-height:1.35;
+      text-align:center;
+    }
+
+    .leaderboard-list {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin:14px 0;
+      max-height:48vh;
+      overflow-y:auto;
+      text-align:left;
+    }
+
+    .leaderboard-row {
+      display:grid;
+      grid-template-columns:42px 1fr auto;
+      gap:8px;
+      align-items:center;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:13px;
+      background:rgba(255,255,255,.04);
+    }
+
+    .leaderboard-row.me {
+      border-color:color-mix(in srgb,var(--tg-button) 65%,transparent);
+      background:color-mix(in srgb,var(--tg-button) 10%,transparent);
+    }
+
+    .leaderboard-rank {
+      font-weight:950;
+      text-align:center;
+    }
+
+    .leaderboard-name {
+      min-width:0;
+      overflow:hidden;
+      font-weight:800;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .leaderboard-score {
+      color:var(--gold);
+      font-weight:950;
+    }
+
+    .leaderboard-me {
+      margin:10px 0;
+      color:var(--tg-hint);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    @media (max-height:720px) {
+      .game-shell,
+      #gameCanvas { min-height:350px; }
+
+      .stat { padding:6px 4px; }
+      .overlay-card { padding:17px; }
+
+      .game-icon {
+        width:56px;
+        height:56px;
+        font-size:29px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <div class="game-toolbar">
+      <button class="toolbar-button" id="backButton" type="button">⬅ Zurück zu Spiele</button>
+      <button class="toolbar-button icon" id="leaderboardButton" type="button">🏆</button>
+      <button class="toolbar-button icon" id="audioButton" type="button">🔊</button>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-label">Punkte</span>
+        <span class="stat-value" id="score">0</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Zeit</span>
+        <span class="stat-value" id="time">60</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Leben</span>
+        <span class="stat-value" id="lives">3</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Combo</span>
+        <span class="stat-value" id="combo">x0</span>
+      </div>
+    </section>
+
+    <section class="game-shell" id="gameShell">
+      <canvas id="gameCanvas"></canvas>
+
+      <div class="overlay" id="startOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">🎯</div>
+          <h1>Bensch Hunt</h1>
+
+          <p class="description">
+            Schieß die Bensch-Gegner ab, bevor sie zurückfeuern.
+            👤 Normal-Bensch = 1 Treffer,
+            ⚡ Flink-Bensch = schnell und klein,
+            🛡️ Tank-Bensch = 3 Treffer.
+            Combos erhöhen die Punkte.
+          </p>
+
+          <button class="primary-button" id="startButton" type="button">
+            Jagd starten
+          </button>
+        </div>
+      </div>
+
+      <div class="overlay hidden" id="endOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">💥</div>
+          <h1>Runde vorbei!</h1>
+
+          <p class="result" id="resultText">0 Punkte</p>
+          <p class="description" id="resultMessage">Nochmal?</p>
+
+          <button class="primary-button" id="restartButton" type="button">
+            Nochmal jagen
+          </button>
+        </div>
+      </div>
+
+      <div class="overlay hidden" id="leaderboardOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">🏆</div>
+          <h1>Bestenliste</h1>
+
+          <p class="description" id="leaderboardStatus">
+            Top 10 werden geladen...
+          </p>
+
+          <div class="leaderboard-list" id="leaderboardList"></div>
+          <div class="leaderboard-me" id="leaderboardMe"></div>
+
+          <button class="secondary-button" id="closeLeaderboardButton" type="button">
+            Schließen
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="helper">
+      Handy: Bensch direkt antippen · Computer: mit Maus klicken
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+
+    const tg = window.Telegram?.WebApp ?? null;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+
+      if (typeof tg.disableVerticalSwipes === "function") {
+        tg.disableVerticalSwipes();
+      }
+
+      try {
+        tg.setHeaderColor("secondary_bg_color");
+        tg.setBackgroundColor("bg_color");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const canvas = document.getElementById("gameCanvas");
+    const context = canvas.getContext("2d");
+
+    const gameShell = document.getElementById("gameShell");
+    const startOverlay = document.getElementById("startOverlay");
+    const endOverlay = document.getElementById("endOverlay");
+    const leaderboardOverlay = document.getElementById("leaderboardOverlay");
+
+    const startButton = document.getElementById("startButton");
+    const restartButton = document.getElementById("restartButton");
+    const backButton = document.getElementById("backButton");
+    const audioButton = document.getElementById("audioButton");
+    const leaderboardButton = document.getElementById("leaderboardButton");
+    const closeLeaderboardButton = document.getElementById("closeLeaderboardButton");
+
+    const scoreElement = document.getElementById("score");
+    const timeElement = document.getElementById("time");
+    const livesElement = document.getElementById("lives");
+    const comboElement = document.getElementById("combo");
+
+    const resultText = document.getElementById("resultText");
+    const resultMessage = document.getElementById("resultMessage");
+
+    const leaderboardStatus = document.getElementById("leaderboardStatus");
+    const leaderboardList = document.getElementById("leaderboardList");
+    const leaderboardMe = document.getElementById("leaderboardMe");
+
+    const headImage = new Image();
+    headImage.src = "kopf.png";
+
+    const logoImage = new Image();
+    logoImage.src = "https://i.imgur.com/C1ToyQZ.png";
+
+    const BASE_WIDTH = 900;
+    const BASE_HEIGHT = 700;
+    const ROUND_TIME = 60;
+
+    const STORAGE_KEY = "benschHuntHighscore";
+
+    const SUPABASE_URL = "https://apjfcvflgwzqpzocjzpj.supabase.co";
+    const SUPABASE_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwamZjdmZsZ3d6cXB6b2NqenBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzEzMTgsImV4cCI6MjA5ODQwNzMxOH0.JfPTMczL8VUVKsr5CO8pVW1eEFcAQdMlpG6ef_7Lntg";
+    const GAME_ID = "bensch_hunt";
+
+    const leaderboardClient =
+      window.supabase && !SUPABASE_PUBLIC_KEY.startsWith("DEIN_")
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY)
+        : null;
+
+    const telegramPlayer = tg?.initDataUnsafe?.user ?? null;
+    const leaderboardUserId =
+      telegramPlayer?.id ? String(telegramPlayer.id) : null;
+    const leaderboardFirstName =
+      telegramPlayer?.first_name || "Spieler";
+
+    let devicePixelRatioValue = 1;
+    let scaleX = 1;
+    let scaleY = 1;
+
+    let gameRunning = false;
+    let animationFrame = null;
+    let lastTimestamp = 0;
+
+    let remainingTime = ROUND_TIME;
+    let score = 0;
+    let lives = 3;
+    let combo = 0;
+    let bestCombo = 0;
+
+    let spawnTimer = 0;
+    let screenFlash = 0;
+    let hitMarker = 0;
+
+    let highscore =
+      Number.parseInt(localStorage.getItem(STORAGE_KEY) || "0",10);
+
+    const enemies = [];
+    const particles = [];
+
+    // AUDIO
+    let audioEnabled = true;
+    let audioContext = null;
+    let masterGain = null;
+    let musicTimer = null;
+    let musicStep = 0;
+
+    const musicPattern = [294,349,392,466,392,349,523,466];
+
+    function ensureAudio() {
+      if (!audioEnabled) return null;
+
+      if (!audioContext) {
+        const AudioContextClass =
+          window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) return null;
+
+        audioContext = new AudioContextClass();
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 0.18;
+        masterGain.connect(audioContext.destination);
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume().catch(() => {});
+      }
+
+      return audioContext;
+    }
+
+    function playTone(frequency,duration=.08,type="sine",volume=.16,slideTo=null) {
+      const ctx = ensureAudio();
+      if (!ctx || !audioEnabled) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency,ctx.currentTime);
+
+      if (slideTo) {
+        osc.frequency.exponentialRampToValueAtTime(
+          Math.max(40,slideTo),
+          ctx.currentTime+duration
+        );
+      }
+
+      gain.gain.setValueAtTime(.0001,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        Math.max(.001,volume),
+        ctx.currentTime+.01
+      );
+      gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        ctx.currentTime+duration
+      );
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start();
+      osc.stop(ctx.currentTime+duration+.02);
+    }
+
+    function startMusic() {
+      if (!audioEnabled || musicTimer) return;
+
+      ensureAudio();
+      musicStep = 0;
+
+      musicTimer = setInterval(() => {
+        if (!audioEnabled || !gameRunning) return;
+
+        const note = musicPattern[musicStep % musicPattern.length];
+        playTone(note,.12,"triangle",.05);
+
+        if (musicStep % 4 === 0) {
+          playTone(note/2,.16,"sine",.025);
+        }
+
+        musicStep += 1;
+      },250);
+    }
+
+    function stopMusic() {
+      if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      audioButton.textContent = audioEnabled ? "🔊" : "🔇";
+
+      if (!audioEnabled) {
+        stopMusic();
+      } else {
+        ensureAudio();
+        playTone(660,.06,"sine",.08);
+        if (gameRunning) startMusic();
+      }
+    }
+
+    function goBackToGames() {
+      stopMusic();
+      location.href = "index.html#games";
+    }
+
+    function vibrate(type="light") {
+      if (tg?.HapticFeedback) {
+        try {
+          tg.HapticFeedback.impactOccurred(type);
+          return;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      if (navigator.vibrate) {
+        navigator.vibrate(type === "heavy" ? 35 : 14);
+      }
+    }
+
+    function notificationFeedback(type) {
+      if (tg?.HapticFeedback) {
+        try {
+          tg.HapticFeedback.notificationOccurred(type);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    function clamp(value,min,max) {
+      return Math.max(min,Math.min(max,value));
+    }
+
+    function randomBetween(min,max) {
+      return Math.random()*(max-min)+min;
+    }
+
+    function resizeCanvas() {
+      const rect = gameShell.getBoundingClientRect();
+
+      devicePixelRatioValue =
+        Math.min(window.devicePixelRatio || 1,2);
+
+      canvas.width =
+        Math.max(1,Math.floor(rect.width*devicePixelRatioValue));
+
+      canvas.height =
+        Math.max(1,Math.floor(rect.height*devicePixelRatioValue));
+
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      scaleX = rect.width/BASE_WIDTH;
+      scaleY = rect.height/BASE_HEIGHT;
+
+      context.setTransform(
+        devicePixelRatioValue*scaleX,
+        0,
+        0,
+        devicePixelRatioValue*scaleY,
+        0,
+        0
+      );
+
+      drawScene();
+    }
+
+    function screenToGame(clientX,clientY) {
+      const rect = canvas.getBoundingClientRect();
+
+      return {
+        x:(clientX-rect.left)/rect.width*BASE_WIDTH,
+        y:(clientY-rect.top)/rect.height*BASE_HEIGHT
+      };
+    }
+
+    function resetGame() {
+      remainingTime = ROUND_TIME;
+      score = 0;
+      lives = 3;
+      combo = 0;
+      bestCombo = 0;
+
+      spawnTimer = .4;
+      screenFlash = 0;
+      hitMarker = 0;
+
+      enemies.length = 0;
+      particles.length = 0;
+
+      updateStats();
+    }
+
+    function startGame() {
+      cancelAnimationFrame(animationFrame);
+
+      resetGame();
+
+      gameRunning = true;
+      lastTimestamp = performance.now();
+
+      startOverlay.classList.add("hidden");
+      endOverlay.classList.add("hidden");
+
+      ensureAudio();
+      startMusic();
+      playTone(520,.08,"triangle",.10);
+
+      vibrate("medium");
+
+      animationFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function endGame() {
+      if (!gameRunning) return;
+
+      gameRunning = false;
+      stopMusic();
+      cancelAnimationFrame(animationFrame);
+
+      const finalScore = Math.floor(score);
+
+      if (finalScore > highscore) {
+        highscore = finalScore;
+        localStorage.setItem(STORAGE_KEY,String(highscore));
+      }
+
+      saveBestScore(finalScore);
+
+      resultText.textContent = `${finalScore} Punkte`;
+      resultMessage.textContent =
+        `Beste Combo x${bestCombo} · Rekord ${highscore}`;
+
+      endOverlay.classList.remove("hidden");
+
+      playTone(
+        finalScore >= 3000 ? 660 : 190,
+        .22,
+        finalScore >= 3000 ? "triangle" : "sawtooth",
+        .13
+      );
+
+      vibrate("heavy");
+      notificationFeedback(finalScore >= 3000 ? "success" : "warning");
+    }
+
+    function gameLoop(timestamp) {
+      if (!gameRunning) return;
+
+      const rawDelta = (timestamp-lastTimestamp)/1000;
+      const deltaTime = Math.min(rawDelta,.035);
+
+      lastTimestamp = timestamp;
+
+      updateGame(deltaTime);
+      drawScene();
+
+      if (gameRunning) {
+        animationFrame = requestAnimationFrame(gameLoop);
+      }
+    }
+
+    function updateGame(deltaTime) {
+      remainingTime -= deltaTime;
+
+      if (remainingTime <= 0) {
+        remainingTime = 0;
+        updateStats();
+        endGame();
+        return;
+      }
+
+      spawnTimer -= deltaTime;
+
+      const difficulty =
+        clamp((ROUND_TIME-remainingTime)/ROUND_TIME,0,1);
+
+      if (spawnTimer <= 0) {
+        spawnEnemy(difficulty);
+
+        spawnTimer =
+          randomBetween(
+            Math.max(.22,.78-difficulty*.32),
+            Math.max(.38,1.05-difficulty*.40)
+          );
+      }
+
+      for (let i=enemies.length-1; i>=0; i-=1) {
+        const enemy = enemies[i];
+
+        enemy.age += deltaTime;
+        enemy.x += enemy.vx*deltaTime;
+
+        if (enemy.x < enemy.radius+18) {
+          enemy.x = enemy.radius+18;
+          enemy.vx = Math.abs(enemy.vx);
+        }
+
+        if (enemy.x > BASE_WIDTH-enemy.radius-18) {
+          enemy.x = BASE_WIDTH-enemy.radius-18;
+          enemy.vx = -Math.abs(enemy.vx);
+        }
+
+        if (!enemy.fired && enemy.age >= enemy.fireDelay) {
+          enemy.fired = true;
+
+          lives -= 1;
+          combo = 0;
+          screenFlash = .22;
+
+          playTone(130,.11,"sawtooth",.09,80);
+          vibrate("heavy");
+
+          createBurst(enemy.x,enemy.y,8);
+
+          if (lives <= 0) {
+            updateStats();
+            endGame();
+            return;
+          }
+        }
+
+        if (enemy.age > enemy.lifeTime) {
+          enemies.splice(i,1);
+        }
+      }
+
+      if (screenFlash > 0) screenFlash -= deltaTime;
+      if (hitMarker > 0) hitMarker -= deltaTime;
+
+      updateParticles(deltaTime);
+      updateStats();
+    }
+
+    function spawnEnemy(difficulty) {
+      const roll = Math.random();
+
+      let type = "normal";
+
+      if (roll < .18 + difficulty*.10) {
+        type = "tank";
+      } else if (roll < .48 + difficulty*.08) {
+        type = "fast";
+      }
+
+      const config =
+        type === "normal"
+          ? {
+              radius:44,
+              hp:1,
+              points:100,
+              speed:randomBetween(20,65),
+              fireDelay:randomBetween(2.0,3.0)-difficulty*.45,
+              lifeTime:3.6
+            }
+          : type === "fast"
+          ? {
+              radius:34,
+              hp:1,
+              points:160,
+              speed:randomBetween(120,210),
+              fireDelay:randomBetween(1.15,1.75)-difficulty*.25,
+              lifeTime:2.5
+            }
+          : {
+              radius:56,
+              hp:3,
+              points:350,
+              speed:randomBetween(20,50),
+              fireDelay:randomBetween(2.4,3.2)-difficulty*.35,
+              lifeTime:4.2
+            };
+
+      const yBands = [145,250,355,460];
+
+      enemies.push({
+        type,
+        x:randomBetween(config.radius+30,BASE_WIDTH-config.radius-30),
+        y:yBands[Math.floor(Math.random()*yBands.length)] + randomBetween(-25,25),
+        radius:config.radius,
+        hp:config.hp,
+        maxHp:config.hp,
+        points:config.points,
+        vx:(Math.random()<.5?-1:1)*config.speed,
+        age:0,
+        fireDelay:Math.max(.65,config.fireDelay),
+        lifeTime:config.lifeTime,
+        fired:false,
+        flash:0
+      });
+    }
+
+    function shootAt(clientX,clientY) {
+      if (!gameRunning) return;
+
+      const point = screenToGame(clientX,clientY);
+
+      playTone(240,.045,"square",.08,520);
+      hitMarker = .08;
+
+      let hit = false;
+
+      for (let i=enemies.length-1; i>=0; i-=1) {
+        const enemy = enemies[i];
+
+        const distanceToEnemy =
+          Math.hypot(point.x-enemy.x,point.y-enemy.y);
+
+        if (distanceToEnemy <= enemy.radius+8) {
+          hit = true;
+          enemy.hp -= 1;
+          enemy.flash = .12;
+
+          createBurst(point.x,point.y,7);
+
+          if (enemy.hp <= 0) {
+            combo += 1;
+            bestCombo = Math.max(bestCombo,combo);
+
+            const comboBonus =
+              Math.min(300,combo*18);
+
+            score += enemy.points + comboBonus;
+
+            playTone(
+              enemy.type === "tank" ? 420 : 620,
+              .07,
+              "triangle",
+              .10
+            );
+
+            if (combo >= 5) {
+              setTimeout(
+                () => playTone(860,.06,"sine",.06),
+                45
+              );
+            }
+
+            enemies.splice(i,1);
+
+            vibrate(combo >= 10 ? "heavy" : "medium");
+          } else {
+            score += 35;
+            playTone(310,.04,"square",.06);
+            vibrate("light");
+          }
+
+          break;
+        }
+      }
+
+      if (!hit) {
+        combo = 0;
+      }
+
+      updateStats();
+    }
+
+    function updateStats() {
+      scoreElement.textContent = Math.floor(score);
+      timeElement.textContent = Math.ceil(remainingTime);
+      livesElement.textContent = lives;
+      comboElement.textContent = `x${combo}`;
+    }
+
+    function createBurst(x,y,amount) {
+      for (let i=0;i<amount;i+=1) {
+        particles.push({
+          x,
+          y,
+          velocityX:randomBetween(-160,160),
+          velocityY:randomBetween(-160,120),
+          life:randomBetween(.25,.65),
+          maxLife:.65,
+          size:randomBetween(3,7)
+        });
+      }
+    }
+
+    function updateParticles(deltaTime) {
+      for (let i=particles.length-1;i>=0;i-=1) {
+        const p = particles[i];
+
+        p.life -= deltaTime;
+        p.velocityY += 220*deltaTime;
+        p.x += p.velocityX*deltaTime;
+        p.y += p.velocityY*deltaTime;
+
+        if (p.life <= 0) {
+          particles.splice(i,1);
+        }
+      }
+    }
+
+    function drawScene() {
+      const background =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--tg-bg").trim() || "#0d1118";
+
+      const secondary =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--tg-secondary-bg").trim() || "#18202b";
+
+      const textColor =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--tg-text").trim() || "#ffffff";
+
+      const accentColor =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--tg-button").trim() || "#f5b700";
+
+      context.clearRect(0,0,BASE_WIDTH,BASE_HEIGHT);
+
+      const gradient =
+        context.createLinearGradient(0,0,0,BASE_HEIGHT);
+
+      gradient.addColorStop(0,secondary);
+      gradient.addColorStop(1,background);
+
+      context.fillStyle = gradient;
+      context.fillRect(0,0,BASE_WIDTH,BASE_HEIGHT);
+
+      drawBackdrop(accentColor);
+      drawEnemies(textColor,accentColor);
+      drawParticles(accentColor);
+      drawCrosshair(textColor,accentColor);
+
+      if (screenFlash > 0) {
+        context.save();
+        context.globalAlpha = clamp(screenFlash/.22,0,.28);
+        context.fillStyle = "#ff2d2d";
+        context.fillRect(0,0,BASE_WIDTH,BASE_HEIGHT);
+        context.restore();
+      }
+    }
+
+    function drawBackdrop(accentColor) {
+      if (logoImage.complete && logoImage.naturalWidth > 0) {
+        context.save();
+        context.globalAlpha = .09;
+
+        const width = 500;
+        const ratio =
+          logoImage.naturalWidth/logoImage.naturalHeight;
+
+        const height = width/ratio;
+
+        context.drawImage(
+          logoImage,
+          (BASE_WIDTH-width)/2,
+          320-height/2,
+          width,
+          height
+        );
+
+        context.restore();
+      }
+
+      context.save();
+      context.globalAlpha = .12;
+      context.strokeStyle = accentColor;
+      context.lineWidth = 2;
+
+      for (let x=80;x<BASE_WIDTH;x+=120) {
+        context.beginPath();
+        context.moveTo(x,90);
+        context.lineTo(x,BASE_HEIGHT-60);
+        context.stroke();
+      }
+
+      for (let y=100;y<BASE_HEIGHT;y+=90) {
+        context.beginPath();
+        context.moveTo(40,y);
+        context.lineTo(BASE_WIDTH-40,y);
+        context.stroke();
+      }
+
+      context.restore();
+    }
+
+    function drawEnemies(textColor,accentColor) {
+      for (const enemy of enemies) {
+        context.save();
+
+        context.translate(enemy.x,enemy.y);
+
+        const ringColor =
+          enemy.type === "normal"
+            ? accentColor
+            : enemy.type === "fast"
+            ? "#70e6ff"
+            : "#ff6a6a";
+
+        context.globalAlpha = .18;
+        context.fillStyle = ringColor;
+        context.beginPath();
+        context.arc(0,0,enemy.radius+12,0,Math.PI*2);
+        context.fill();
+
+        context.globalAlpha = 1;
+
+        if (headImage.complete && headImage.naturalWidth > 0) {
+          context.save();
+
+          context.beginPath();
+          context.arc(0,0,enemy.radius,0,Math.PI*2);
+          context.clip();
+
+          context.drawImage(
+            headImage,
+            -enemy.radius,
+            -enemy.radius,
+            enemy.radius*2,
+            enemy.radius*2
+          );
+
+          context.restore();
+        } else {
+          context.fillStyle = accentColor;
+          context.beginPath();
+          context.arc(0,0,enemy.radius,0,Math.PI*2);
+          context.fill();
+        }
+
+        context.strokeStyle = ringColor;
+        context.lineWidth = enemy.type === "tank" ? 5 : 3;
+        context.beginPath();
+        context.arc(0,0,enemy.radius,0,Math.PI*2);
+        context.stroke();
+
+        if (enemy.type === "fast") {
+          context.fillStyle = "#70e6ff";
+          context.font = "900 22px system-ui";
+          context.textAlign = "center";
+          context.fillText("⚡",0,-enemy.radius-12);
+        }
+
+        if (enemy.type === "tank") {
+          context.fillStyle = "#ff6a6a";
+          context.font = "900 20px system-ui";
+          context.textAlign = "center";
+          context.fillText("🛡️",0,-enemy.radius-15);
+
+          const barWidth = enemy.radius*1.45;
+
+          context.fillStyle = "rgba(0,0,0,.4)";
+          context.fillRect(-barWidth/2,enemy.radius+12,barWidth,8);
+
+          context.fillStyle = "#ff6a6a";
+          context.fillRect(
+            -barWidth/2,
+            enemy.radius+12,
+            barWidth*(enemy.hp/enemy.maxHp),
+            8
+          );
+        }
+
+        const charge =
+          clamp(enemy.age/enemy.fireDelay,0,1);
+
+        context.globalAlpha = .75;
+        context.strokeStyle =
+          charge > .8 ? "#ff4040" : textColor;
+        context.lineWidth = 3;
+
+        context.beginPath();
+        context.arc(
+          0,
+          0,
+          enemy.radius+18,
+          -Math.PI/2,
+          -Math.PI/2 + Math.PI*2*charge
+        );
+        context.stroke();
+
+        context.restore();
+      }
+    }
+
+    function drawCrosshair(textColor,accentColor) {
+      if (hitMarker <= 0) return;
+
+      context.save();
+      context.globalAlpha = .9;
+      context.strokeStyle = accentColor;
+      context.lineWidth = 3;
+
+      context.beginPath();
+      context.moveTo(BASE_WIDTH/2-12,BASE_HEIGHT/2);
+      context.lineTo(BASE_WIDTH/2+12,BASE_HEIGHT/2);
+      context.moveTo(BASE_WIDTH/2,BASE_HEIGHT/2-12);
+      context.lineTo(BASE_WIDTH/2,BASE_HEIGHT/2+12);
+      context.stroke();
+
+      context.restore();
+    }
+
+    function drawParticles(color) {
+      context.save();
+      context.fillStyle = color;
+
+      for (const p of particles) {
+        context.globalAlpha =
+          clamp(p.life/p.maxLife,0,.75);
+
+        context.beginPath();
+        context.arc(
+          p.x,
+          p.y,
+          p.size,
+          0,
+          Math.PI*2
+        );
+        context.fill();
+      }
+
+      context.restore();
+    }
+
+    // ===== BESTENLISTE =====
+    function maskLeaderboardName(name) {
+  return String(name || "Spieler").trim();
+}
+
+    function leaderboardMedal(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return `${rank}.`;
+    }
+
+    async function saveBestScore(finalScore) {
+      if (!leaderboardClient || !leaderboardUserId) return;
+
+      const safeScore =
+        Math.max(0,Math.floor(Number(finalScore) || 0));
+
+      try {
+        const { data: existing, error: readError } =
+          await leaderboardClient
+            .from("game_scores")
+            .select("score")
+            .eq("user_id",leaderboardUserId)
+            .eq("game",GAME_ID)
+            .maybeSingle();
+
+        if (readError) throw readError;
+
+        if (existing && Number(existing.score) >= safeScore) {
+          return;
+        }
+
+        const { error: writeError } =
+          await leaderboardClient
+            .from("game_scores")
+            .upsert(
+              {
+                user_id:leaderboardUserId,
+                first_name:leaderboardFirstName,
+                game:GAME_ID,
+                score:safeScore,
+                updated_at:new Date().toISOString()
+              },
+              { onConflict:"user_id,game" }
+            );
+
+        if (writeError) throw writeError;
+      } catch (error) {
+        console.log("Leaderboard save error:",error);
+      }
+    }
+
+    async function openLeaderboard() {
+      leaderboardOverlay.classList.remove("hidden");
+      leaderboardStatus.textContent = "Top 10 werden geladen...";
+      leaderboardList.innerHTML = "";
+      leaderboardMe.textContent = "";
+
+      if (!leaderboardClient) {
+        leaderboardStatus.textContent =
+          "Supabase-Key noch nicht eingetragen.";
+        return;
+      }
+
+      try {
+        const { data, error } =
+          await leaderboardClient
+            .from("game_scores")
+            .select("user_id,first_name,score")
+            .eq("game",GAME_ID)
+            .order("score",{ascending:false})
+            .limit(10);
+
+        if (error) throw error;
+
+        leaderboardStatus.textContent =
+          data && data.length
+            ? "🏆 Top 10"
+            : "Noch keine Highscores.";
+
+        leaderboardList.innerHTML = "";
+
+        (data || []).forEach((entry,index) => {
+          const row = document.createElement("div");
+
+          const isMe =
+            leaderboardUserId &&
+            String(entry.user_id) === leaderboardUserId;
+
+          row.className =
+            "leaderboard-row" + (isMe ? " me" : "");
+
+          row.innerHTML = `
+            <div class="leaderboard-rank">
+              ${leaderboardMedal(index+1)}
+            </div>
+            <div class="leaderboard-name">
+              ${maskLeaderboardName(entry.first_name)}
+              ${isMe ? " · DU" : ""}
+            </div>
+            <div class="leaderboard-score">
+              ${Number(entry.score) || 0}
+            </div>
+          `;
+
+          leaderboardList.appendChild(row);
+        });
+
+        if (leaderboardUserId) {
+          const { data: allScores, error: rankError } =
+            await leaderboardClient
+              .from("game_scores")
+              .select("user_id,score")
+              .eq("game",GAME_ID)
+              .order("score",{ascending:false});
+
+          if (!rankError && allScores) {
+            const myIndex =
+              allScores.findIndex(
+                entry =>
+                  String(entry.user_id) === leaderboardUserId
+              );
+
+            if (myIndex >= 0) {
+              leaderboardMe.textContent =
+                `📍 Dein Platz: ${myIndex+1} · Highscore: ${allScores[myIndex].score}`;
+            } else {
+              leaderboardMe.textContent =
+                "📍 Spiele eine Runde, um in der Bestenliste zu erscheinen.";
+            }
+          }
+        }
+      } catch (error) {
+        console.log("Leaderboard load error:",error);
+        leaderboardStatus.textContent =
+          "Bestenliste konnte nicht geladen werden.";
+      }
+    }
+
+    function closeLeaderboard() {
+      leaderboardOverlay.classList.add("hidden");
+    }
+
+    canvas.addEventListener("pointerdown",event => {
+      event.preventDefault();
+      shootAt(event.clientX,event.clientY);
+    },{passive:false});
+
+    backButton.addEventListener("click",goBackToGames);
+    audioButton.addEventListener("click",toggleAudio);
+    leaderboardButton.addEventListener("click",openLeaderboard);
+    closeLeaderboardButton.addEventListener("click",closeLeaderboard);
+
+    startButton.addEventListener("click",startGame);
+    restartButton.addEventListener("click",startGame);
+
+    window.addEventListener("resize",resizeCanvas);
+
+    document.addEventListener("visibilitychange",() => {
+      if (document.hidden && gameRunning) {
+        endGame();
+      }
+    });
+
+    gameShell.addEventListener(
+      "contextmenu",
+      event => event.preventDefault()
+    );
+
+    headImage.onload = drawScene;
+    logoImage.onload = drawScene;
+
+    resizeCanvas();
+    resetGame();
+    drawScene();
+  </script>
+</body>
+</html>

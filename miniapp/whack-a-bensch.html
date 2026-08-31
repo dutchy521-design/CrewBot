@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <title>Whack a Bensch – Telegram Mini Game</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js?61"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --tg-bg: var(--tg-theme-bg-color, #0d1118);
+      --tg-text: var(--tg-theme-text-color, #ffffff);
+      --tg-hint: var(--tg-theme-hint-color, #a7b0bd);
+      --tg-button: var(--tg-theme-button-color, #f5b700);
+      --tg-button-text: var(--tg-theme-button-text-color, #141414);
+      --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #18202b);
+
+      --panel: color-mix(in srgb, var(--tg-secondary-bg) 93%, transparent);
+      --border: rgba(255,255,255,.10);
+      --gold: #ffd451;
+      --shadow: rgba(0,0,0,.30);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      user-select: none;
+      touch-action: manipulation;
+      color: var(--tg-text);
+      background: var(--tg-bg);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding:
+        max(12px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-right))
+        max(12px, env(safe-area-inset-bottom))
+        max(12px, env(safe-area-inset-left));
+      background:
+        radial-gradient(circle at 12% 0%, rgba(255,215,0,.13), transparent 34%),
+        radial-gradient(circle at 92% 82%, rgba(255,0,255,.11), transparent 38%),
+        var(--tg-bg);
+    }
+
+    .game-toolbar {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .toolbar-button {
+      width:auto;
+      flex:1;
+      min-height:42px;
+      margin:0;
+      padding:9px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      color:var(--tg-text);
+      background:var(--panel);
+      box-shadow:0 6px 18px var(--shadow);
+      font-weight:850;
+      cursor:pointer;
+    }
+
+    .toolbar-button.audio {
+      flex:0 0 52px;
+      font-size:20px;
+      padding-left:8px;
+      padding-right:8px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 7px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 9px 5px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: 0 8px 22px var(--shadow);
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--tg-hint);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      display: block;
+      overflow: hidden;
+      font-size: clamp(17px, 5vw, 25px);
+      font-weight: 950;
+      line-height: 1.1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .game-shell {
+      position: relative;
+      flex: 1;
+      min-height: 460px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow:
+        inset 0 0 45px rgba(0,0,0,.17),
+        0 12px 32px var(--shadow);
+    }
+
+    .game-area {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255,215,0,.06), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.08));
+    }
+
+    .message {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 20px;
+      font-weight: 950;
+      text-align: center;
+      text-shadow: 0 0 16px rgba(255,215,0,.3);
+    }
+
+    .holes {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      grid-template-rows: repeat(3,1fr);
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .hole {
+      position: relative;
+      width: min(27vw, 120px);
+      aspect-ratio: 1 / .78;
+      overflow: visible;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .hole-base {
+      position: absolute;
+      left: 4%;
+      right: 4%;
+      bottom: 2%;
+      height: 40%;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, #160c08 0%, #2c1710 52%, #5b321d 72%, transparent 74%);
+      box-shadow:
+        inset 0 6px 12px rgba(0,0,0,.7),
+        0 10px 16px rgba(0,0,0,.25);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .dirt {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 33%;
+      border-radius: 50%;
+      background: linear-gradient(180deg,#8a5427,#4c2815);
+      border: 2px solid rgba(255,215,0,.10);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .bensch-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 13%;
+      width: 82%;
+      aspect-ratio: 1/1;
+      transform: translate(-50%, 75%) scale(.75);
+      opacity: 0;
+      transition:
+        transform .12s ease-out,
+        opacity .08s ease-out;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hole.active .bensch-wrap {
+      transform: translate(-50%, -16%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .hole.hit .bensch-wrap {
+      transform: translate(-50%, -3%) scale(.82) rotate(-8deg);
+      filter: brightness(1.2);
+    }
+
+    .bensch {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter:
+        drop-shadow(0 5px 7px rgba(0,0,0,.45))
+        drop-shadow(0 0 9px rgba(255,215,0,.16));
+      pointer-events: none;
+    }
+
+    .bonk {
+      position: absolute;
+      left: 50%;
+      top: 2%;
+      transform: translateX(-50%) scale(.5);
+      opacity: 0;
+      z-index: 8;
+      font-size: clamp(18px,5vw,30px);
+      font-weight: 950;
+      color: var(--gold);
+      text-shadow:
+        0 3px 0 rgba(0,0,0,.4),
+        0 0 16px rgba(255,215,0,.5);
+      pointer-events: none;
+    }
+
+    .hole.hit .bonk {
+      animation: bonkPop .35s ease-out;
+    }
+
+    @keyframes bonkPop {
+      0% { opacity: 0; transform: translateX(-50%) scale(.4); }
+      35% { opacity: 1; transform: translateX(-50%) scale(1.25) rotate(-6deg); }
+      100% { opacity: 0; transform: translateX(-50%) scale(.9) translateY(-20px); }
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(7,10,15,.48);
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay-card {
+      width: min(92%,390px);
+      padding: 22px 20px;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--tg-secondary-bg) 95%, transparent);
+      box-shadow: 0 22px 52px rgba(0,0,0,.40);
+      text-align: center;
+    }
+
+    .game-icon {
+      display: grid;
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 13px;
+      place-items: center;
+      border: 3px solid rgba(255,255,255,.28);
+      border-radius: 22px;
+      background: linear-gradient(145deg,#ffe47a,#e2a000);
+      color: #5c3c00;
+      box-shadow:
+        inset 0 0 0 5px rgba(102,66,0,.16),
+        0 10px 24px rgba(245,183,0,.25);
+      font-size: 37px;
+      transform: rotate(-4deg);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(25px,7vw,37px);
+      line-height: 1;
+    }
+
+    .description {
+      margin: 0 0 16px;
+      color: var(--tg-hint);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .result {
+      margin: -2px 0 10px;
+      color: var(--gold);
+      font-size: 24px;
+      font-weight: 950;
+    }
+
+    .primary-button {
+      width: 100%;
+      min-height: 53px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 15px;
+      color: var(--tg-button-text);
+      background: var(--tg-button);
+      box-shadow: 0 9px 24px color-mix(in srgb, var(--tg-button) 28%, transparent);
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease;
+    }
+
+    .primary-button:active {
+      transform: scale(.97);
+      filter: brightness(.92);
+    }
+
+    .helper {
+      color: var(--tg-hint);
+      font-size: 12px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    @media (max-height: 720px) {
+      .game-shell {
+        min-height: 370px;
+      }
+
+      .game-area {
+        padding: 10px;
+      }
+
+      .holes {
+        gap: 7px;
+      }
+
+      .message {
+        height: 30px;
+        font-size: 17px;
+      }
+
+      .overlay-card {
+        padding: 17px;
+      }
+
+      .game-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 29px;
+      }
+    }
+
+    .toolbar-button.leaderboard {
+      flex: 0 0 52px;
+      font-size: 20px;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 14px 0;
+      max-height: 48vh;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .leaderboard-row {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .leaderboard-row.me {
+      border-color: color-mix(in srgb, var(--tg-button) 65%, transparent);
+      background: color-mix(in srgb, var(--tg-button) 10%, transparent);
+    }
+
+    .leaderboard-rank {
+      font-weight: 950;
+      text-align: center;
+    }
+
+    .leaderboard-name {
+      min-width: 0;
+      overflow: hidden;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .leaderboard-score {
+      color: var(--gold);
+      font-weight: 950;
+    }
+
+    .leaderboard-me {
+      margin-top: 10px;
+      color: var(--tg-hint);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .secondary-button {
+      width: 100%;
+      min-height: 48px;
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      color: var(--tg-text);
+      background: rgba(255,255,255,.06);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="game-toolbar">
+      <button class="toolbar-button" id="backButton" type="button">⬅ Zurück zu Spiele</button>
+      <button class="toolbar-button leaderboard" id="leaderboardButton" type="button" aria-label="Bestenliste">🏆</button>
+      <button class="toolbar-button audio" id="audioButton" type="button" aria-label="Ton an oder aus">🔊</button>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-label">Punkte</span>
+        <span class="stat-value" id="score">0</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Zeit</span>
+        <span class="stat-value" id="time">45</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Combo</span>
+        <span class="stat-value" id="combo">x0</span>
+      </div>
+
+      <div class="stat">
+        <span class="stat-label">Rekord</span>
+        <span class="stat-value" id="highscore">0</span>
+      </div>
+    </section>
+
+    <section class="game-shell">
+
+      <div class="game-area">
+        <div class="message" id="message">Triff Bensch! 🔨</div>
+
+        <div class="holes" id="holes"></div>
+      </div>
+
+      <div class="overlay" id="startOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">🔨</div>
+          <h1>Whack a Bensch</h1>
+
+          <p class="description">
+            Bensch taucht aus den Löchern auf. Tippe ihn so schnell wie möglich an.
+            Jede Treffer-Serie erhöht deine Combo – und das Spiel wird immer schneller.
+            Du hast 45 Sekunden.
+          </p>
+
+          <button class="primary-button" id="startButton" type="button">
+            Bensch jagen
+          </button>
+        </div>
+      </div>
+
+      <div class="overlay hidden" id="endOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">💥</div>
+          <h1>Feierabend für Bensch!</h1>
+
+          <p class="result" id="resultText">0 Punkte</p>
+
+          <p class="description" id="resultMessage">
+            Gleich nochmal drauf.
+          </p>
+
+          <button class="primary-button" id="restartButton" type="button">
+            Nochmal hauen
+          </button>
+        </div>
+      </div>
+
+    
+      <div class="overlay hidden" id="leaderboardOverlay">
+        <div class="overlay-card">
+          <div class="game-icon">🏆</div>
+          <h1>Bestenliste</h1>
+          <p class="description" id="leaderboardStatus">Top 10 werden geladen...</p>
+          <div class="leaderboard-list" id="leaderboardList"></div>
+          <div class="leaderboard-me" id="leaderboardMe"></div>
+          <button class="secondary-button" id="closeLeaderboardButton" type="button">
+            Schließen
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="helper">
+      Handy: Bensch antippen · Je höher die Combo, desto mehr Punkte
+    </div>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    const tg = window.Telegram?.WebApp ?? null;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+
+      if (typeof tg.disableVerticalSwipes === "function") {
+        tg.disableVerticalSwipes();
+      }
+
+      try {
+        tg.setHeaderColor("secondary_bg_color");
+        tg.setBackgroundColor("bg_color");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
+    // ===== SOUND & HINTERGRUNDMUSIK =====
+    let audioEnabled = true;
+    let audioContext = null;
+    let masterGain = null;
+    let musicTimer = null;
+    let musicStep = 0;
+    const musicPattern = [294,330,392,330,349,440,392,330];
+
+    function ensureAudio() {
+      if (!audioEnabled) return null;
+      if (!audioContext) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+        audioContext = new AudioContextClass();
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 0.18;
+        masterGain.connect(audioContext.destination);
+      }
+      if (audioContext.state === "suspended") {
+        audioContext.resume().catch(() => {});
+      }
+      return audioContext;
+    }
+
+    function playTone(frequency, duration=0.08, type="sine", volume=0.16, slideTo=null) {
+      const ctx = ensureAudio();
+      if (!ctx || !audioEnabled) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+      if (slideTo) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(40, slideTo), ctx.currentTime + duration);
+      }
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.001, volume), ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start();
+      osc.stop(ctx.currentTime + duration + 0.02);
+    }
+
+    function startMusic() {
+      if (!audioEnabled || musicTimer) return;
+      ensureAudio();
+      musicStep = 0;
+      musicTimer = setInterval(() => {
+        if (!audioEnabled || !gameRunning) return;
+        const note = musicPattern[musicStep % musicPattern.length];
+        playTone(note, 0.12, "triangle", 0.055);
+        if (musicStep % 4 === 0) playTone(note / 2, 0.16, "sine", 0.025);
+        musicStep += 1;
+      }, 260);
+    }
+
+    function stopMusic() {
+      if (musicTimer) {
+        clearInterval(musicTimer);
+        musicTimer = null;
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      audioButton.textContent = audioEnabled ? "🔊" : "🔇";
+      if (!audioEnabled) {
+        stopMusic();
+      } else {
+        ensureAudio();
+        playTone(660, 0.06, "sine", 0.08);
+        if (gameRunning) startMusic();
+      }
+    }
+
+    function goBackToGames() {
+      stopMusic();
+      if (history.length > 1) {
+        history.back();
+      } else {
+        location.href = "index.html#games";
+      }
+    }
+
+
+    // ===== SUPABASE BESTENLISTE =====
+    const SUPABASE_URL = "https://apjfcvflgwzqpzocjzpj.supabase.co";
+    const SUPABASE_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwamZjdmZsZ3d6cXB6b2NqenBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MzEzMTgsImV4cCI6MjA5ODQwNzMxOH0.JfPTMczL8VUVKsr5CO8pVW1eEFcAQdMlpG6ef_7Lntg";
+    const GAME_ID = "whack_bensch";
+    const leaderboardClient =
+      window.supabase && !SUPABASE_PUBLIC_KEY.startsWith("DEIN_")
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY)
+        : null;
+
+    const telegramPlayer = tg?.initDataUnsafe?.user ?? null;
+    const leaderboardUserId = telegramPlayer?.id
+      ? String(telegramPlayer.id)
+      : null;
+    const leaderboardFirstName =
+      telegramPlayer?.first_name || "Spieler";
+
+    function maskLeaderboardName(name) {
+  return String(name || "Spieler").trim();
+}
+
+    function leaderboardMedal(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return String(rank) + ".";
+    }
+
+    async function saveBestScore(finalScore) {
+      if (!leaderboardClient || !leaderboardUserId) return;
+
+      const safeScore = Math.max(0, Math.floor(Number(finalScore) || 0));
+
+      try {
+        const { data: existing, error: readError } = await leaderboardClient
+          .from("game_scores")
+          .select("score")
+          .eq("user_id", leaderboardUserId)
+          .eq("game", GAME_ID)
+          .maybeSingle();
+
+        if (readError) throw readError;
+
+        if (existing && Number(existing.score) >= safeScore) {
+          return;
+        }
+
+        const row = {
+          user_id: leaderboardUserId,
+          first_name: leaderboardFirstName,
+          game: GAME_ID,
+          score: safeScore,
+          updated_at: new Date().toISOString()
+        };
+
+        const { error: writeError } = await leaderboardClient
+          .from("game_scores")
+          .upsert(row, { onConflict: "user_id,game" });
+
+        if (writeError) throw writeError;
+      } catch (error) {
+        console.log("Leaderboard save error:", error);
+      }
+    }
+
+    async function openLeaderboard() {
+      leaderboardOverlay.classList.remove("hidden");
+      leaderboardStatus.textContent = "Top 10 werden geladen...";
+      leaderboardList.innerHTML = "";
+      leaderboardMe.textContent = "";
+
+      if (!leaderboardClient) {
+        leaderboardStatus.textContent =
+          "Supabase ist noch nicht fertig eingerichtet. Trage den öffentlichen Anon/Publishable-Key in dieser HTML ein.";
+        return;
+      }
+
+      try {
+        const { data, error } = await leaderboardClient
+          .from("game_scores")
+          .select("user_id,first_name,score")
+          .eq("game", GAME_ID)
+          .order("score", { ascending: false })
+          .limit(10);
+
+        if (error) throw error;
+
+        leaderboardStatus.textContent =
+          data && data.length ? "🏆 Top 10" : "Noch keine Highscores vorhanden.";
+
+        leaderboardList.innerHTML = "";
+
+        (data || []).forEach((entry, index) => {
+          const row = document.createElement("div");
+          const isMe =
+            leaderboardUserId &&
+            String(entry.user_id) === leaderboardUserId;
+
+          row.className = "leaderboard-row" + (isMe ? " me" : "");
+
+          const rank = index + 1;
+
+          row.innerHTML = `
+            <div class="leaderboard-rank">${leaderboardMedal(rank)}</div>
+            <div class="leaderboard-name">${maskLeaderboardName(entry.first_name)}${isMe ? " · DU" : ""}</div>
+            <div class="leaderboard-score">${Number(entry.score) || 0}</div>
+          `;
+
+          leaderboardList.appendChild(row);
+        });
+
+        if (leaderboardUserId) {
+          const { data: allScores, error: rankError } = await leaderboardClient
+            .from("game_scores")
+            .select("user_id,score")
+            .eq("game", GAME_ID)
+            .order("score", { ascending: false });
+
+          if (!rankError && allScores) {
+            const myIndex = allScores.findIndex(
+              entry => String(entry.user_id) === leaderboardUserId
+            );
+
+            if (myIndex >= 0) {
+              leaderboardMe.textContent =
+                `📍 Dein Platz: ${myIndex + 1} · Highscore: ${allScores[myIndex].score}`;
+            } else {
+              leaderboardMe.textContent =
+                "📍 Spiele eine Runde, um in der Bestenliste zu erscheinen.";
+            }
+          }
+        } else {
+          leaderboardMe.textContent =
+            "Öffne das Spiel über Telegram, damit dein Highscore gespeichert werden kann.";
+        }
+      } catch (error) {
+        console.log("Leaderboard load error:", error);
+        leaderboardStatus.textContent =
+          "Bestenliste konnte gerade nicht geladen werden.";
+      }
+    }
+
+    function closeLeaderboard() {
+      leaderboardOverlay.classList.add("hidden");
+    }
+
+    const ROUND_TIME = 45;
+    const STORAGE_KEY = "whackABenschHighscore";
+
+    const holesContainer = document.getElementById("holes");
+    const startOverlay = document.getElementById("startOverlay");
+    const endOverlay = document.getElementById("endOverlay");
+
+    const startButton = document.getElementById("startButton");
+    const restartButton = document.getElementById("restartButton");
+    const backButton = document.getElementById("backButton");
+    const audioButton = document.getElementById("audioButton");
+    const leaderboardButton = document.getElementById("leaderboardButton");
+    const leaderboardOverlay = document.getElementById("leaderboardOverlay");
+    const leaderboardStatus = document.getElementById("leaderboardStatus");
+    const leaderboardList = document.getElementById("leaderboardList");
+    const leaderboardMe = document.getElementById("leaderboardMe");
+    const closeLeaderboardButton = document.getElementById("closeLeaderboardButton");
+
+    const scoreElement = document.getElementById("score");
+    const timeElement = document.getElementById("time");
+    const comboElement = document.getElementById("combo");
+    const highscoreElement = document.getElementById("highscore");
+    const messageElement = document.getElementById("message");
+    const resultText = document.getElementById("resultText");
+    const resultMessage = document.getElementById("resultMessage");
+
+    let gameRunning = false;
+    let score = 0;
+    let combo = 0;
+    let bestCombo = 0;
+    let hits = 0;
+    let misses = 0;
+    let remainingTime = ROUND_TIME;
+
+    let activeHole = -1;
+    let activeHit = false;
+
+    let spawnTimer = null;
+    let hideTimer = null;
+    let secondTimer = null;
+
+    let highscore = Number.parseInt(
+      localStorage.getItem(STORAGE_KEY) || "0",
+      10
+    );
+
+    highscoreElement.textContent = highscore;
+
+    const holes = [];
+
+    for (let index = 0; index < 9; index += 1) {
+      const hole = document.createElement("div");
+      hole.className = "hole";
+      hole.dataset.index = String(index);
+
+      hole.innerHTML = `
+        <div class="bensch-wrap">
+          <img class="bensch" src="kopf.png" alt="Bensch">
+        </div>
+        <div class="bonk">BONK! 💥</div>
+        <div class="hole-base"></div>
+        <div class="dirt"></div>
+      `;
+
+      hole.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        hitBensch(index);
+      }, { passive: false });
+
+      holesContainer.appendChild(hole);
+      holes.push(hole);
+    }
+
+    function vibrate(type = "light") {
+      if (tg?.HapticFeedback) {
+        try {
+          tg.HapticFeedback.impactOccurred(type);
+          return;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      if (navigator.vibrate) {
+        navigator.vibrate(type === "heavy" ? 35 : 14);
+      }
+    }
+
+    function notificationFeedback(type) {
+      if (tg?.HapticFeedback) {
+        try {
+          tg.HapticFeedback.notificationOccurred(type);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function resetGame() {
+      clearTimers();
+
+      score = 0;
+      combo = 0;
+      bestCombo = 0;
+      hits = 0;
+      misses = 0;
+      remainingTime = ROUND_TIME;
+      activeHole = -1;
+      activeHit = false;
+
+      holes.forEach(hole => {
+        hole.classList.remove("active", "hit");
+      });
+
+      messageElement.textContent = "Triff Bensch! 🔨";
+
+      updateStats();
+    }
+
+    function clearTimers() {
+      clearTimeout(spawnTimer);
+      clearTimeout(hideTimer);
+      clearInterval(secondTimer);
+
+      spawnTimer = null;
+      hideTimer = null;
+      secondTimer = null;
+    }
+
+    function startGame() {
+      resetGame();
+
+      gameRunning = true;
+
+      startOverlay.classList.add("hidden");
+      endOverlay.classList.add("hidden");
+
+      vibrate("medium");
+      ensureAudio();
+      playTone(520,0.08,"triangle",0.10);
+      startMusic();
+
+      secondTimer = setInterval(() => {
+        remainingTime -= 1;
+
+        if (remainingTime <= 0) {
+          remainingTime = 0;
+          updateStats();
+          endGame();
+          return;
+        }
+
+        updateStats();
+      }, 1000);
+
+      scheduleNextBensch(350);
+    }
+
+    function endGame() {
+      if (!gameRunning) return;
+
+      gameRunning = false;
+      stopMusic();
+      clearTimers();
+
+      if (activeHole >= 0) {
+        holes[activeHole].classList.remove("active", "hit");
+      }
+
+      activeHole = -1;
+
+      const finalScore = Math.floor(score);
+
+      saveBestScore(finalScore);
+
+      if (finalScore > highscore) {
+        highscore = finalScore;
+        localStorage.setItem(STORAGE_KEY, String(highscore));
+      }
+
+      updateStats();
+
+      const totalAttempts = hits + misses;
+      const accuracy = totalAttempts > 0
+        ? Math.round((hits / totalAttempts) * 100)
+        : 0;
+
+      resultText.textContent = `${finalScore} Punkte`;
+
+      if (finalScore >= 140) {
+        resultMessage.textContent =
+          `Bensch hatte keine Chance 😂 ${hits} Treffer · beste Combo x${bestCombo} · ${accuracy}% Trefferquote.`;
+      } else if (finalScore >= 90) {
+        resultMessage.textContent =
+          `Sehr stark! ${hits} Treffer · beste Combo x${bestCombo} · ${accuracy}% Trefferquote.`;
+      } else if (finalScore >= 50) {
+        resultMessage.textContent =
+          `Sauber gehauen 😄 ${hits} Treffer · beste Combo x${bestCombo}.`;
+      } else {
+        resultMessage.textContent =
+          `${hits} Treffer · beste Combo x${bestCombo}. Bensch war diesmal noch zu flink.`;
+      }
+
+      endOverlay.classList.remove("hidden");
+
+      vibrate("heavy");
+      playTone(finalScore >= 90 ? 660 : 190,0.22,finalScore >= 90 ? "triangle" : "sawtooth",0.13);
+      notificationFeedback(finalScore >= 90 ? "success" : "warning");
+    }
+
+    function updateStats() {
+      scoreElement.textContent = Math.floor(score);
+      timeElement.textContent = remainingTime;
+      comboElement.textContent = `x${combo}`;
+      highscoreElement.textContent = highscore;
+    }
+
+    function getDifficulty() {
+      const timeProgress =
+        (ROUND_TIME - remainingTime) / ROUND_TIME;
+
+      const comboBoost =
+        clamp(combo / 15, 0, 1);
+
+      const hitBoost =
+        clamp(hits / 55, 0, 1);
+
+      return clamp(
+        timeProgress * 0.45 +
+        comboBoost * 0.35 +
+        hitBoost * 0.20,
+        0,
+        1
+      );
+    }
+
+    function currentVisibleTime() {
+      const difficulty = getDifficulty();
+
+      return Math.round(
+        900 - difficulty * 520
+      );
+    }
+
+    function currentPauseTime() {
+      const difficulty = getDifficulty();
+
+      return Math.round(
+        470 - difficulty * 300
+      );
+    }
+
+    function scheduleNextBensch(extraDelay = null) {
+      if (!gameRunning) return;
+
+      const delay = extraDelay ?? currentPauseTime();
+
+      spawnTimer = setTimeout(() => {
+        showBensch();
+      }, delay);
+    }
+
+    function showBensch() {
+      if (!gameRunning) return;
+
+      let nextHole = Math.floor(Math.random() * holes.length);
+
+      if (holes.length > 1 && nextHole === activeHole) {
+        nextHole = (nextHole + 1 + Math.floor(Math.random() * 8)) % holes.length;
+      }
+
+      activeHole = nextHole;
+      activeHit = false;
+
+      const hole = holes[activeHole];
+      hole.classList.remove("hit");
+      hole.classList.add("active");
+
+      const visibleTime = currentVisibleTime();
+
+      hideTimer = setTimeout(() => {
+        if (!gameRunning) return;
+
+        if (!activeHit) {
+          misses += 1;
+          combo = 0;
+          messageElement.textContent = "Zu langsam! 😜";
+          playTone(150,0.08,"sawtooth",0.045,95);
+          updateStats();
+        }
+
+        hole.classList.remove("active", "hit");
+        activeHole = -1;
+
+        scheduleNextBensch();
+      }, visibleTime);
+    }
+
+    function hitBensch(index) {
+      if (!gameRunning) return;
+
+      if (index !== activeHole || activeHit) {
+        return;
+      }
+
+      activeHit = true;
+      clearTimeout(hideTimer);
+
+      hits += 1;
+      combo += 1;
+      bestCombo = Math.max(bestCombo, combo);
+
+      let points = 1;
+
+      if (combo >= 3) points += 1;
+      if (combo >= 6) points += 1;
+      if (combo >= 10) points += 1;
+      if (combo >= 15) points += 1;
+
+      score += points;
+
+      const hole = holes[index];
+      hole.classList.add("hit");
+
+      if (combo >= 15) {
+        messageElement.textContent = `🔥 BENSCH MASSAKER x${combo} · +${points}`;
+      } else if (combo >= 10) {
+        messageElement.textContent = `💥 MEGA COMBO x${combo} · +${points}`;
+      } else if (combo >= 6) {
+        messageElement.textContent = `⚡ COMBO x${combo} · +${points}`;
+      } else if (combo >= 3) {
+        messageElement.textContent = `🔨 BONK x${combo} · +${points}`;
+      } else {
+        messageElement.textContent = `BONK! +${points}`;
+      }
+
+      updateStats();
+
+      const bonkPitch = Math.min(980,230 + combo * 28);
+      playTone(bonkPitch,0.055,"square",0.13,Math.max(90,bonkPitch * 0.62));
+      if (combo >= 5) {
+        setTimeout(() => playTone(bonkPitch * 1.35,0.045,"triangle",0.07),35);
+      }
+
+      vibrate(combo >= 10 ? "heavy" : "medium");
+
+      if (combo > 0 && combo % 10 === 0) {
+        notificationFeedback("success");
+      }
+
+      setTimeout(() => {
+        hole.classList.remove("active", "hit");
+        activeHole = -1;
+
+        scheduleNextBensch(
+          Math.max(75, currentPauseTime() - combo * 4)
+        );
+      }, 115);
+    }
+
+    leaderboardButton.addEventListener("click", openLeaderboard);
+    closeLeaderboardButton.addEventListener("click", closeLeaderboard);
+    backButton.addEventListener("click", goBackToGames);
+    audioButton.addEventListener("click", toggleAudio);
+
+    startButton.addEventListener("click", startGame);
+    restartButton.addEventListener("click", startGame);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && gameRunning) {
+        endGame();
+      }
+    });
+
+    document.addEventListener("contextmenu", event => {
+      event.preventDefault();
+    });
+
+    updateStats();
+  </script>
+</body>
+</html>

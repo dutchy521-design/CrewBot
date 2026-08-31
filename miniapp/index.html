@@ -198,7 +198,8 @@ transform: translateY(-1px);
 /* SLOT (orange glow) */
 /* SLOT (orange glow) */
 #slotDisplay{
-  width:260px;
+  width:calc(100% - 20px);
+box-sizing:border-box;
   height:130px;
 
   display:flex;
@@ -242,6 +243,26 @@ transform: translateY(-1px);
 transform: perspective(500px) rotateX(4deg);
 }
 
+.slot-symbol{
+    width:72px;
+    height:72px;
+    object-fit:contain;
+    flex-shrink:0;
+
+    filter:
+        drop-shadow(0 0 8px rgba(255,215,0,.35))
+        drop-shadow(0 5px 8px rgba(0,0,0,.45));
+}
+
+.slot-symbols{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    height:100%;
+}
+
 /* obere glänzende leiste */
 #slotDisplay::before{
   content:"";
@@ -282,37 +303,32 @@ rgba(255,255,255,0)
   pointer-events:none;
 }
 
-.slot-rolling{
-  animation:
-    slotSpin 0.10s linear infinite,
-    slotGlow 1s ease infinite;
+.slot-rolling .slot-reel{
+    animation: reelShake .12s linear infinite;
 }
 
-@keyframes slotGlow{
+.slot-rolling .slot-symbol{
+    filter:
+        blur(2px)
+        brightness(1.15)
+        drop-shadow(0 0 10px rgba(255,215,0,.35));
 
-0%{
-box-shadow:
-0 0 18px rgba(255,215,0,0.25);
+    transform:scale(1.06);
 }
 
-50%{
-box-shadow:
-0 0 50px rgba(255,215,0,0.65);
-}
+@keyframes reelShake{
+    0%{
+        transform:translateY(-4px);
+    }
 
-100%{
-box-shadow:
-0 0 18px rgba(255,215,0,0.25);
-}
+    50%{
+        transform:translateY(4px);
+    }
 
+    100%{
+        transform:translateY(-4px);
+    }
 }
-
-@keyframes slotSpin{
-  0%{transform:translateY(-5px);}
-  50%{transform:translateY(5px);}
-  100%{transform:translateY(-5px);}
-}
-
 .slot-jackpot{
   animation: jackpotGlow 0.6s infinite;
 }
@@ -321,6 +337,155 @@ box-shadow:
 0%{box-shadow:0 0 15px rgba(255,215,0,0.35);}
 50%{box-shadow:0 0 40px rgba(255,215,0,0.8);}
 100%{box-shadow:0 0 15px rgba(255,215,0,0.35);}
+}
+
+.slot-jackpot-logo{
+    display:block;
+    width:100%;
+    max-width:390px;
+    height:auto;
+    margin:0 auto;
+    object-fit:contain;
+
+    filter:
+        drop-shadow(0 0 10px rgba(255,190,0,.45))
+        drop-shadow(0 6px 10px rgba(0,0,0,.55));
+}
+
+.slot-machine-shell{
+    width:100%;
+    max-width:360px;
+    margin:0 auto;
+
+    padding:14px;
+
+    border-radius:28px;
+
+    background:
+        linear-gradient(145deg,#050505,#16100a,#030303);
+
+    border:3px solid #d89b00;
+
+    box-shadow:
+        0 0 25px rgba(255,190,0,.35),
+        inset 0 0 25px rgba(255,190,0,.08),
+        0 18px 40px rgba(0,0,0,.6);
+}
+
+.slot-machine-top{
+    text-align:center;
+    margin-bottom:12px;
+}
+
+.slot-machine-title{
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:1px;
+
+    color:#ffd700;
+
+    text-shadow:
+        0 0 12px rgba(255,215,0,.6),
+        0 2px 0 #000;
+}
+
+.slot-jackpot-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    gap:6px;
+    margin-top:10px;
+}
+
+.slot-jackpot-row span{
+    padding:7px 3px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(180deg,#191919,#070707);
+
+    border:1px solid rgba(255,215,0,.25);
+
+    font-size:9px;
+    font-weight:800;
+
+    line-height:1.2;
+}
+
+.slot-jackpot-row b{
+    font-size:11px;
+}
+
+.jackpot-mini{
+    color:#4cff4c;
+}
+
+.jackpot-minor{
+    color:#4db8ff;
+}
+
+.jackpot-major{
+    color:#ff4848;
+}
+
+.jackpot-grand{
+    color:#ffd700;
+
+    animation:grandPulse 1.4s infinite;
+}
+
+@keyframes grandPulse{
+    0%,100%{
+        box-shadow:0 0 6px rgba(255,215,0,.15);
+    }
+
+    50%{
+        box-shadow:0 0 16px rgba(255,215,0,.65);
+    }
+}
+
+.slot-reel{
+    width:76px;
+    height:88px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(180deg,#f4f4f4,#b8b8b8,#f7f7f7);
+
+    border:3px solid #a87400;
+
+    box-shadow:
+        inset 0 6px 10px rgba(255,255,255,.8),
+        inset 0 -8px 15px rgba(0,0,0,.22),
+        0 0 12px rgba(255,190,0,.25);
+
+    overflow:hidden;
+}
+
+.slot-symbol{
+    width:70px;
+    height:70px;
+
+    object-fit:contain;
+}
+
+.slot-machine-footer{
+    margin-top:10px;
+
+    text-align:center;
+
+    font-size:11px;
+    font-weight:700;
+
+    color:#d8c99b;
+
+    opacity:.85;
 }
 
 /* TEXT */
@@ -1144,11 +1309,10 @@ box-shadow:
 }
 
 .dash-icon{
+    width:90px;
+    height:90px;
+    object-fit:contain;
 
-width:58px;
-height:58px;
-
-object-fit:contain;
 
 display:block;
 
@@ -1412,6 +1576,112 @@ box-shadow:
     box-shadow:0 0 20px rgba(255,215,0,.45);
 
 }
+
+/* =========================
+   CREW LIVE TICKER
+========================= */
+
+.crew-ticker{
+    width:100%;
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        90deg,
+        rgba(25,8,55,.95),
+        rgba(60,10,85,.95)
+    );
+
+    border:1px solid rgba(255,215,0,.25);
+
+    box-shadow:
+    0 0 18px rgba(255,0,255,.12),
+    0 0 12px rgba(255,215,0,.08);
+}
+
+
+/* LIVE Feld links */
+
+.crew-ticker-badge{
+    flex-shrink:0;
+
+    padding:13px 14px;
+
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:1px;
+
+    color:#fff;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff1744,
+        #b00020
+    );
+
+    z-index:2;
+
+    box-shadow:
+    5px 0 15px rgba(0,0,0,.25);
+}
+
+
+/* Fenster für laufenden Text */
+
+.crew-ticker-window{
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+
+/* Beweglicher Bereich */
+
+.crew-ticker-track{
+    display:inline-flex;
+    align-items:center;
+    gap:45px;
+
+    padding-left:100%;
+
+    animation:
+    crewTickerMove 28s linear infinite;
+}
+
+
+/* einzelne News */
+
+.crew-ticker-track span{
+    display:inline-block;
+
+    font-size:13px;
+    font-weight:800;
+
+    color:white;
+
+    padding:12px 0;
+}
+
+
+/* Laufanimation */
+
+@keyframes crewTickerMove{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(-100%);
+    }
+
+}
 </style>
 </head>
 
@@ -1457,6 +1727,24 @@ font-weight:700;
 
 </div>
 
+<!-- CREW LIVE TICKER -->
+
+<div class="crew-ticker">
+
+    <div class="crew-ticker-badge">
+        🔥 LIVE
+    </div>
+
+    <div class="crew-ticker-window">
+
+        <div class="crew-ticker-track" id="crewTickerTrack"></div>
+
+    </div>
+
+</div>
+
+<!-- ENDE CREW LIVE TICKER -->
+
 <div style="
 margin-top:8px;
 opacity:.8;
@@ -1474,25 +1762,28 @@ Spiele • Gewinne • Community
 
 <div style="text-align:center;">
 
-<img
-src="icons/giveaway.png"
-style="
-width:72px;
-height:72px;
-display:block;
-margin:0 auto 15px;
-filter:drop-shadow(0 0 18px rgba(255,215,0,.45));
-animation:pulse 1.8s infinite;
+<div style="
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0 auto 14px;
 ">
 
-<div style="
-font-size:13px;
-letter-spacing:3px;
-opacity:.8;
-font-weight:800;
-margin-bottom:10px;
+<img
+src="https://i.imgur.com/d4MnjTK.png"
+alt="Cashout Crew Giveaway"
+style="
+width:100%;
+max-width:300px;
+height:auto;
+display:block;
+margin:0 auto;
+filter:
+drop-shadow(0 0 16px rgba(255,0,255,.30))
+drop-shadow(0 0 12px rgba(255,215,0,.25));
 ">
-🎉 CASHOUT CREW GIVEAWAY
+
 </div>
 
 <div style="
@@ -1568,9 +1859,22 @@ text-shadow:0 0 18px rgba(255,215,0,.35);
 </div>
 
 <div style="
-font-size:58px;
+display:flex;
+align-items:center;
+justify-content:center;
 ">
-👑
+
+<img
+src="icons/crew-crown.png"
+alt="Crew Krone"
+style="
+width:72px;
+height:auto;
+display:block;
+filter:drop-shadow(0 0 12px rgba(255,215,0,.45));
+"
+>
+
 </div>
 
 </div>
@@ -1612,56 +1916,38 @@ Noch 100 XP bis Level 2
 style="cursor:pointer;">
 
 <div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
+width:100%;
+text-align:center;
 margin-bottom:18px;
 ">
 
-<div>
-
-<div style="
-display:inline-block;
-padding:6px 14px;
-border-radius:999px;
-background:linear-gradient(90deg,#ffd700,#ffb300);
-color:#111;
-font-size:11px;
-font-weight:900;
-letter-spacing:2px;
-margin-bottom:10px;
-box-shadow:0 0 18px rgba(255,215,0,.25);
-">
-⭐ CREW HIGHLIGHT
-</div>
-
-<div style="
-font-size:30px;
-font-weight:900;
-line-height:1.1;
-color:white;
-margin-top:6px;
-">
-💰 Letzter Community Gewinn
-</div>
-
-</div>
-
-<div style="font-size:42px;">
-🏆
-</div>
+<img
+src="icons/community-win.png"
+alt="Crew Community Win"
+style="
+width:100%;
+max-width:300px;
+height:auto;
+display:block;
+margin:0 auto;
+object-fit:contain;
+filter:
+drop-shadow(0 0 14px rgba(255,0,255,.25))
+drop-shadow(0 0 12px rgba(255,215,0,.25));
+"
+>
 
 </div>
 
 <div class="highlight-frame">
 
 <a
-href="https://t.me/Wanted_Benj_or_a_Wild"
+href="https://t.me/PhilAdler"
 target="_blank"
 style="display:block;">
 
 <img
-src="https://i.imgur.com/KXK4PWc.jpeg"
+src="https://i.imgur.com/42eaD83.jpeg"
 class="highlight-img">
 
 </a>
@@ -1681,27 +1967,27 @@ font-size:30px;
 font-weight:900;
 color:#ffd700;
 ">
-💰 492,45 €
+💰 2700,00 €
 </div>
 
 <div style="
 margin-top:8px;
 opacity:.8;
 ">
-👤 PhilAdler
+👤 hansimgluck
 </div>
 
 <div style="
 margin-top:5px;
 opacity:.7;
 ">
-🎰 Stay Casino
+🎰 Shiny Wildz
 </div>
 
 </div>
 
 <button
-onclick="window.open('https://staylinks.net/alvwtd3cx','_blank')"
+onclick="window.open('https://partners.shinywildpartners.com/v2/text/298/9/b83eb1d7-7b78-11f1-8d87-cad21936ea85/1','_blank')"
 style="
 height:48px;
 padding:0 18px;
@@ -1716,154 +2002,299 @@ cursor:pointer;
 </div>
 <div class="dashboard-grid">
 
-<div class="dashboard-item" onclick="claimDaily()">
+  <div class="dashboard-item" onclick="show('deals')">
 
-<div class="dash-icon"><img src="icons/gift.png" class="dash-icon"></div>
+    <div class="dash-icon">
+      <img src="icons/deals.png" class="dash-icon">
+    </div>
 
-<div class="dash-title">
-Daily Bonus
+    <div class="dash-title">
+      Deals
+    </div>
+
+    <div class="dash-sub">
+      Unsere Top Deals
+    </div>
+
+  </div>
+
+
+  <div class="dashboard-item" onclick="show('profile')">
+
+    <div class="dash-icon">
+      <img src="icons/trophy.png" class="dash-icon">
+    </div>
+
+    <div class="dash-title">
+      Mein Profil
+    </div>
+
+    <div class="dash-sub">
+      XP & Level
+    </div>
+
+  </div>
+
+
+  <div class="dashboard-item" onclick="openSlot()">
+
+    <div class="dash-icon">
+      <img src="icons/jackpot.png" class="dash-icon">
+    </div>
+
+    <div class="dash-title">
+      Slot
+    </div>
+
+    <div class="dash-sub">
+      Drehe täglich
+    </div>
+
+  </div>
+
+
+  <!-- CREW CHALLENGE -->
+  <div class="dashboard-item"
+       onclick="window.location.href='crew-challenges.html'">
+
+    <div class="dash-icon">
+      <img src="icons/challenge.png" class="dash-icon">
+    </div>
+
+    <div class="dash-title">
+      Crew Challenge
+    </div>
+
+    <div class="dash-sub">
+      Quiz • Puzzle • Achievements
+    </div>
+
+  </div>
+
 </div>
 
-<div class="dash-sub">
-Streak sammeln
-</div>
-
-</div>
-
-<div class="dashboard-item" onclick="show('profile')">
-
-<div class="dash-icon"><img src="icons/trophy.png" class="dash-icon"></div>
-
-<div class="dash-title">
-Mein Profil
-</div>
-
-<div class="dash-sub">
-XP & Level
-</div>
-
-</div>
-
-<div class="dashboard-item" onclick="openSlot()">
-
-<div class="dash-icon"><img src="icons/jackpot.png" class="dash-icon"></div>
-
-<div class="dash-title">
-Slot
-</div>
-
-<div class="dash-sub">
-Drehe täglich
-</div>
-
-</div>
-
-
-</div>
 
 <div class="card community-card"
 onclick="window.open('https://t.me/+9-h-MOTRqs9lMjQy','_blank')">
-
     <div class="community-info">
 
-        <div class="community-badge">
-            COMMUNITY
-        </div>
+        <div style="
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+">
 
-        <div class="community-title">
-            <img src="icons/comu.png" class="small-icon">
-
-             Cashout Crew
-        </div>
-
-        <div class="community-desc">
-            Werde Teil unserer Community.<br>
-            Freispiele, Aktionen und exklusive Deals warten auf dich.
-        </div>
-
-    </div>
-
-    <div class="community-icon">
-        <img src="icons/chat.png" class="community-big-icon">
-    </div>
-
-</div>
-
-<div class="card" onclick="show('wm')" style="cursor:pointer;">
+  <img
+    src="https://i.imgur.com/UY26C89.png"
+    alt="Cashout Crew"
+    style="
+      width:100%;
+      max-width:420px;
+      height:auto;
+      display:block;
+      margin:0 auto 14px auto;
+      filter:
+        drop-shadow(0 0 18px rgba(255,0,255,.30))
+        drop-shadow(0 0 14px rgba(255,215,0,.25));
+    "
+  >
 
   <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    font-size:15px;
+    opacity:.8;
+    line-height:1.6;
+    margin-bottom:16px;
   ">
+    Werde Teil unserer Community.<br>
+    Freispiele, Aktionen und exklusive Deals warten auf dich.
+  </div>
+
+  <button style="
+    width:100%;
+    max-width:320px;
+    padding:13px 18px;
+    border:none;
+    border-radius:20px;
+    font-weight:900;
+    cursor:pointer;
+  ">
+    👥 Tritt der Gruppe bei
+  </button>
+
+</div>
+</div>
+</div>
+<div class="card" id="slotCard">
+
+    <div class="slot-wrapper">
+
+        <div class="slot-machine-shell">
+
+            <div class="slot-machine-top">
+
+                <div class="slot-machine-title">
+    <img
+        src="https://i.imgur.com/aDRrID8.png"
+        class="slot-jackpot-logo"
+        alt="Cashout Crew Jackpot">
+</div>
+
+                <div class="slot-jackpot-row">
+                    <span class="jackpot-mini">MINI<br><b>5 XP</b></span>
+                    <span class="jackpot-minor">MINOR<br><b>10 XP</b></span>
+                    <span class="jackpot-major">MAJOR<br><b>25 XP</b></span>
+                    <span class="jackpot-grand">GRAND<br><b>25€</b></span>
+                </div>
+
+            </div>
+
+
+            <div id="slotDisplay">
+
+                <div class="slot-symbols">
+
+                    <div class="slot-reel">
+                        <img
+                            class="slot-symbol"
+                            id="slot1"
+                            src="slot/slot_mini.png">
+                    </div>
+
+                    <div class="slot-reel">
+                        <img
+                            class="slot-symbol"
+                            id="slot2"
+                            src="slot/slot_minor.png">
+                    </div>
+
+                    <div class="slot-reel">
+                        <img
+                            class="slot-symbol"
+                            id="slot3"
+                            src="slot/slot_major.png">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="slot-machine-footer">
+                🎰 1 kostenloser Dreh alle 24 Stunden
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button id="spinBtn" onclick="spinSlot()">
+        🎰 CREW SPIN
+    </button>
+
+    <div
+        id="slotResult"
+        style="margin-top:10px;font-weight:bold;text-align:center;">
+        --
+    </div>
+
+</div>
+
+
+<!-- SLOT POPUP -->
+
+<div id="slotPopup" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.88);
+z-index:99999;
+align-items:center;
+justify-content:center;
+padding:20px;
+">
+
+    <div style="
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    ">
+
+        <img
+            id="slotPopupImage"
+            src=""
+            style="
+            width:100%;
+            border-radius:24px;
+            display:block;
+            box-shadow:
+            0 0 35px rgba(255,215,0,.45),
+            0 20px 60px rgba(0,0,0,.65);
+            ">
+
+        <button
+            onclick="closeSlotPopup()"
+            style="
+            margin-top:18px;
+            font-size:18px;
+            ">
+            WEITER
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- DAILY BONUS -->
+
+<div class="card" id="dailyCard">
+
+    <h3>🎁 Daily Bonus</h3>
 
     <div>
-      <div style="
-        font-size:22px;
-        font-weight:900;
-      ">
-        <img src="icons/worldcup.png" class="small-icon"> WM Tippspiel
-      </div>
-
-      <div style="
-        opacity:0.75;
-        margin-top:6px;
-        font-size:14px;
-      ">
-        Spiele tippen, Fragen beantworten & Punkte sammeln
-      </div>
+        Streak: <b id="streak">0</b> 🔥
     </div>
 
-    <div style="font-size:42px;">
-      <img src="icons/football.png" class="wm-icon">
+    <div id="cooldown">
+        Lädt...
     </div>
 
-  </div>
+    <button
+        id="dailyBtn"
+        onclick="claimDaily()">
+        Daily abholen
+    </button>
 
 </div>
 
-<div class="card" id="slotCard">
-🎰 Slot Machine
-
-<div class="slot-wrapper">
-  <div class="slot-header">🎰 Casino Slot</div>
-
-  <div id="slotDisplay">
-    🍒 🍒 🍒
-  </div>
-
-  <div class="slot-sub">Dreh und gewinne XP!</div>
 </div>
 
-<button id="spinBtn" onclick="spinSlot()">
-👑 ROYAL SPIN
-</button>
+<!-- ENDE HOME -->
 
-<div id="slotResult" style="margin-top:10px;font-weight:bold;text-align:center;">
---
-</div>
-</div>
 
-<!-- 🔥 DAILY BONUS (NEU) -->
-<div class="card" id="dailyCard">
-<h3>🎁 Daily Bonus</h3>
-<div>Streak: <b id="streak">0</b> 🔥</div>
-<div id="cooldown">Lädt...</div>
-
-<button id="dailyBtn" onclick="claimDaily()">
-Daily abholen
-</button>
-</div>
-
-<div class="card">
-Status: <b>Treasure Mode aktiv</b>
-</div>
-</div>
-
-<!-- WM -->
+<!-- TIPPSPIEL -->
 <div id="wm" class="page">
 
-<h2><img src="icons/worldcup.png" class="small-icon"> WM Tippspiel</h2>
+<div style="text-align:center;margin-bottom:18px;">
+  <img
+    src="https://i.imgur.com/BoBm6F7.png"
+    alt="Cashout Crew Tippspiel"
+    style="
+      width:100%;
+      max-width:520px;
+      height:auto;
+      display:block;
+      margin:0 auto;
+      filter:
+        drop-shadow(0 0 18px rgba(255,0,255,0.35))
+        drop-shadow(0 0 16px rgba(255,215,0,0.28));
+    "
+  >
+</div>
 <div class="card">
 
 <div style="
@@ -1899,75 +2330,22 @@ text-align:center;
 <!-- INFO CARD -->
 <div class="card">
 
-<h3>⚽ Willkommen zur WM</h3>
+<h3>⚽ Willkommen beim Tippspiel</h3>
 
 <div style="opacity:0.8;line-height:1.5;">
 
-• Tippe alle WM Spiele<br>
-• Beantworte Bonusfragen<br>
-• Frage des Tages täglich neu<br>
-• Sammle Punkte im Ranking<br>
-• Gewinne am Ende Rewards 🎁
+• Tippe ausgewählte Fußballspiele<br>
+• Sammle Punkte für richtige Tipps<br>
+• Steige im Leaderboard auf<br>
+• Neue Spiele werden regelmäßig hinzugefügt<br>
+• Vergangene Tipps und Ergebnisse kannst du jederzeit ansehen
 
 </div>
 
-</div>
-
-<!-- SONDERTIPPS -->
-<div class="card">
-
-<h3>🏆 WM Sondertipps</h3>
-
-<div style="margin-bottom:10px;">
-Diese Tipps können nur einmal abgegeben werden.
-</div>
-
-<select id="worldChampion" style="width:100%;margin-bottom:10px;">
-<option value="">🏆 Weltmeister</option>
-<option>Deutschland</option>
-<option>Brasilien</option>
-<option>Argentinien</option>
-<option>Frankreich</option>
-<option>Spanien</option>
-<option>Portugal</option>
-<option>England</option>
-</select>
-
-<select id="germanyResult" style="width:100%;margin-bottom:10px;">
-<option value="">🇩🇪 Deutschland erreicht...</option>
-<option>Gruppenphase</option>
-<option>Achtelfinale</option>
-<option>Viertelfinale</option>
-<option>Halbfinale</option>
-<option>Finale</option>
-<option>Weltmeister</option>
-</select>
-
-<select id="topScorer" style="width:100%;margin-bottom:10px;">
-<option value="">⚽ Torschützenkönig</option>
-<option>Mbappé</option>
-<option>Kane</option>
-<option>Musiala</option>
-<option>Vinicius Jr.</option>
-<option>Haaland</option>
-<option>Anderer Spieler</option>
-</select>
-<input
-id="otherTopScorer"
-type="text"
-placeholder="Name eingeben"
-style="width:100%;margin-bottom:10px;display:none;">
-
-<button onclick="saveSpecialTips()">
-💾 Sondertipps speichern
-</button>
-
-<div id="specialTipsResult" style="margin-top:10px;"></div>
-<div id="mySpecialTips" style="margin-top:15px;"></div>
 </div>
 
 <div class="card">
-  <h3>🏆 WM Leaderboard</h3>
+  <h3>🏆 Tippspiel Leaderboard</h3>
 
   <div id="wmLeaderboard">Lädt...</div>
 
@@ -1983,13 +2361,32 @@ style="width:100%;margin-bottom:10px;display:none;">
 <div class="card">
 
 <div class="card">
-<h3>⚽ Spiele</h3>
-<button onclick="loadPastMatches()">
+<h3>⚽ Aktuelle Tipps</h3>
+
+<div style="
+opacity:0.75;
+font-size:14px;
+line-height:1.5;
+margin-bottom:15px;
+">
+Tippe die ausgewählten Spiele vor dem Anpfiff.<br>
+Nach Spielbeginn wird der Tipp automatisch geschlossen.
+</div>
+
+<div id="wmMatches">Lädt Spiele...</div>
+
+<button
+  id="pastMatchesBtn"
+  onclick="togglePastMatches()"
+  style="margin-top:20px;"
+>
 📜 Vergangene Spiele anzeigen
 </button>
 
-<div id="pastMatches" style="margin-top:15px;"></div>
-<div id="wmMatches">Lädt Spiele...</div>
+<div
+  id="pastMatches"
+  style="margin-top:15px;display:none;"
+></div>
 </div>
 
 </div>
@@ -2104,29 +2501,326 @@ Dort kannst du deine Einzahlung wie gewohnt posten.
 <!-- DEALS -->
 <div id="deals" class="page">
 
-<h2>🔥 Cashout Crew Deals</h2>
+<div style="text-align:center;margin-bottom:22px;">
+  <img
+    src="https://i.imgur.com/Htn5gZF.png"
+    alt="Cashout Crew Deals"
+    style="
+      width:100%;
+      max-width:520px;
+      height:auto;
+      display:block;
+      margin:0 auto;
+      filter:
+        drop-shadow(0 0 18px rgba(255,0,255,0.35))
+        drop-shadow(0 0 16px rgba(255,215,0,0.28));
+    "
+  >
+</div>
 
 <div id="dealContainer"></div>
 
 </div>
 
+<!-- GAMES -->
+<div id="games" class="page">
 
+    <div style="text-align:center;margin-bottom:22px;">
+  <img
+    src="https://i.imgur.com/tliQPn1.png"
+    alt="Cashout Crew Games"
+    style="
+      width:100%;
+      max-width:520px;
+      height:auto;
+      display:block;
+      margin:0 auto;
+      filter:
+        drop-shadow(0 0 18px rgba(255,0,255,0.35))
+        drop-shadow(0 0 16px rgba(255,215,0,0.28));
+    "
+  >
+</div>
+
+    <div class="card">
+
+        <div style="
+        font-size:34px;
+        text-align:center;
+        margin-bottom:10px;
+        ">
+        🏃
+        </div>
+
+        <h3 style="text-align:center;">
+            Cashout Runner
+        </h3>
+
+        <div style="
+        text-align:center;
+        opacity:.75;
+        line-height:1.5;
+        margin-bottom:15px;
+        ">
+            Springe über Hindernisse und versuche deinen Highscore zu knacken.
+            Je länger du durchhältst, desto schneller wird das Spiel.
+        </div>
+
+        <button onclick="openRunner()">
+            🎮 SPIEL STARTEN
+        </button>
+
+    </div>
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🏀
+    </div>
+
+    <h3 style="text-align:center;">
+        Cashout Basketball
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Ziehe den Basketball in Richtung Korb und knacke deinen Highscore.
+        Triff Serien für starke Combos und Bonuspunkte.
+    </div>
+
+    <button onclick="openBasketball()">
+        🏀 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- WHACK A BENSCH -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🔨
+    </div>
+
+    <h3 style="text-align:center;">
+        Whack a Bensch
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Bensch taucht aus den Löchern auf – erwisch ihn so schnell du kannst!
+        Baue Combos auf, sammle Bonuspunkte und knacke deinen Highscore.
+    </div>
+
+    <button onclick="openWhackBensch()">
+        🔨 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- BENSCH JUMP -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🪂
+    </div>
+
+    <h3 style="text-align:center;">
+        Bensch Jump
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Springe mit Bensch immer höher!
+        Sammle ⭐ Bonuspunkte, 🚀 Raketen-Boosts und 🛡️ Rettungsschilde
+        und knacke deinen Highscore.
+    </div>
+
+    <button onclick="openBenschJump()">
+        🪂 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- BENSCH BREAKOUT -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🧱
+    </div>
+
+    <h3 style="text-align:center;">
+        Bensch Breakout
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Zerstöre alle Blöcke mit Bensch als Ball.
+        Sammle Power-ups wie Multiball, Feuerball,
+        Schutzschild und einen breiteren Schläger.
+    </div>
+
+    <button onclick="openBenschBreakout()">
+        🧱 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- CASHOUT HIGHWAY -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🚗
+    </div>
+
+    <h3 style="text-align:center;">
+        Cashout Highway
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Wechsle die Spur, weich Autos und Baustellen aus
+        und sammle Coins.
+        Nutze Nitro, Schild, Magnet und x2-Power-ups
+        und knacke deinen Highscore.
+    </div>
+
+    <button onclick="openCashoutHighway()">
+        🚗 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- BENSCH CANNON -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🧨
+    </div>
+
+    <h3 style="text-align:center;">
+        Bensch Cannon
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Stell Winkel und Schusskraft ein und baller Bensch
+        so weit wie möglich.
+        Sammle Coins, Raketen, Bonussterne und Trampoline.
+    </div>
+
+    <button onclick="openBenschCannon()">
+        🧨 SPIEL STARTEN
+    </button>
+
+</div>
+
+<!-- BENSCH HUNT -->
+
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🎯
+    </div>
+
+    <h3 style="text-align:center;">
+        Bensch Hunt
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Schieß die Bensch-Gegner ab, bevor sie zurückfeuern.
+        Normal-Bensch, Flink-Bensch und Tank-Bensch warten auf dich.
+        Baue Combos auf und knacke den Highscore.
+    </div>
+
+    <button onclick="openBenschHunt()">
+        🎯 SPIEL STARTEN
+    </button>
+
+</div>
+</div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
-<h2>👤 Crew-Profil</h2>
+<div style="text-align:center;margin-bottom:22px;">
+  <img
+    src="https://i.imgur.com/RtKeStK.png"
+    alt="Cashout Crew Profil"
+    style="
+      width:100%;
+      max-width:520px;
+      height:auto;
+      display:block;
+      margin:0 auto;
+      filter:
+        drop-shadow(0 0 18px rgba(255,0,255,0.35))
+        drop-shadow(0 0 16px rgba(255,215,0,0.28));
+    "
+  >
+</div>
 
 <div class="card" style="text-align:center;">
-
-<div style="
-font-size:13px;
-letter-spacing:3px;
-opacity:.65;
-margin-bottom:10px;
-text-transform:uppercase;
-">
-👑 CASHOUT CREW
-</div>
 
 <img
 id="avatarimg"
@@ -2276,27 +2970,24 @@ cursor:pointer;
 
 <div style="
 text-align:center;
-margin-bottom:20px;
+margin-bottom:12px;
 ">
 
-<div style="
-font-size:13px;
-letter-spacing:3px;
-text-transform:uppercase;
-opacity:.6;
-">
-DEIN STATUS
-</div>
-
-<div style="
-font-size:34px;
-font-weight:900;
-color:#ffd700;
-margin-top:5px;
-text-shadow:0 0 15px rgba(255,215,0,.35);
-">
-🏆 CREW LEVEL
-</div>
+<img
+src="icons/crew-status.png"
+alt="Crew Status"
+style="
+width:100%;
+max-width:250px;
+height:auto;
+display:block;
+margin:0 auto;
+object-fit:contain;
+filter:
+drop-shadow(0 0 12px rgba(255,0,255,.25))
+drop-shadow(0 0 10px rgba(255,215,0,.25));
+"
+>
 
 </div>
 
@@ -2395,7 +3086,22 @@ font-weight:700;
 opacity:.8;
 ">
 
-<span>⭐ XP Fortschritt</span>
+<span style="
+display:flex;
+align-items:center;
+gap:6px;
+">
+    <img
+        src="icons/crew-crown.png"
+        alt="Crew"
+        style="
+        width:24px;
+        height:24px;
+        object-fit:contain;
+        "
+    >
+    XP Fortschritt
+</span>
 
 <span id="profilexp">
 0 / 100 XP
@@ -2426,22 +3132,25 @@ margin-bottom:20px;
 ">
 
 <div style="
-font-size:13px;
-letter-spacing:3px;
-text-transform:uppercase;
-opacity:.6;
+text-align:center;
+width:100%;
+margin-bottom:18px;
 ">
-COMMUNITY
-</div>
 
-<div style="
-font-size:30px;
-font-weight:900;
-color:#ffd700;
-margin-top:5px;
-text-shadow:0 0 15px rgba(255,215,0,.35);
-">
-👥 FREUNDE EINLADEN
+<img
+src="icons/freunde-einladen.png"
+alt="Freunde einladen"
+style="
+width:100%;
+max-width:260px;
+height:auto;
+display:block;
+margin:0 auto;
+object-fit:contain;
+filter:drop-shadow(0 0 18px rgba(255,0,255,.25));
+"
+>
+
 </div>
 
 </div>
@@ -2482,7 +3191,26 @@ box-sizing:border-box;
 
 <div class="card">
 
-<h3>📊 Deine Statistiken</h3>
+<div style="
+text-align:center;
+width:100%;
+margin-bottom:18px;
+">
+    <img
+        src="icons/statistiken.png"
+        alt="Cashout Crew Statistiken"
+        style="
+        width:100%;
+        max-width:300px;
+        height:auto;
+        display:block;
+        margin:0 auto;
+        filter:
+            drop-shadow(0 0 14px rgba(255,0,255,.25))
+            drop-shadow(0 0 10px rgba(255,215,0,.20));
+        "
+    >
+</div>
 
 <div style="
 display:grid;
@@ -2492,27 +3220,84 @@ margin-top:18px;
 ">
 
 <div class="stat-box">
-<div class="stat-icon">👥</div>
+
+<div class="stat-icon">
+    <img
+        src="icons/einladungen.png"
+        alt="Einladungen"
+        style="
+        width:90px;
+        height:90px;
+        object-fit:contain;
+        display:block;
+        margin:0 auto 6px auto;
+        filter:drop-shadow(0 0 10px rgba(255,0,255,.25));
+        "
+    >
+</div>
+
 <div class="stat-value" id="invitecount">0</div>
-<div class="stat-label">Einladungen</div>
+
+
 </div>
 
 <div class="stat-box">
-<div class="stat-icon">⭐</div>
+
+<div class="stat-icon">
+    <img
+        src="icons/level.png"
+        alt="Level"
+        style="
+        width:90px;
+        height:90px;
+        object-fit:contain;
+        display:block;
+        margin:0 auto 6px auto;
+        filter:drop-shadow(0 0 10px rgba(255,215,0,.25));
+        "
+    >
+</div>
+
 <div class="stat-value" id="profillevel">1</div>
-<div class="stat-label">Level</div>
+
 </div>
 
 <div class="stat-box">
-<div class="stat-icon">💎</div>
+
+<img
+src="icons/xp.png"
+alt="XP"
+style="
+width:75px;
+height:75px;
+object-fit:contain;
+display:block;
+margin:0 auto 5px;
+filter:drop-shadow(0 0 10px rgba(255,215,0,.35));
+">
+
 <div class="stat-value" id="profilxp">0</div>
-<div class="stat-label">XP</div>
+
+
 </div>
 
 <div class="stat-box">
-<div class="stat-icon">🔥</div>
+
+<img
+src="icons/streak.png"
+alt="Streak"
+style="
+width:75px;
+height:75px;
+object-fit:contain;
+display:block;
+margin:0 auto 5px;
+filter:drop-shadow(0 0 10px rgba(255,120,0,.35));
+">
+
 <div class="stat-value" id="profilstreak">1</div>
-<div class="stat-label">Streak</div>
+
+
 </div>
 
 </div>
@@ -2528,8 +3313,29 @@ opacity:.8;
 
 <!-- LEADERBOARD -->
 <div class="card">
-<h3>🏆 Leaderboard</h3>
+<div style="
+width:100%;
+text-align:center;
+margin-bottom:18px;
+">
 
+<img
+src="icons/leaderboard.png"
+alt="Crew Leaderboard"
+style="
+width:100%;
+max-width:320px;
+height:auto;
+display:block;
+margin:0 auto;
+object-fit:contain;
+filter:
+drop-shadow(0 0 14px rgba(255,0,255,.25))
+drop-shadow(0 0 10px rgba(255,215,0,.20));
+"
+>
+
+</div>
 <div id="leaderboard">
 Lädt...
 </div>
@@ -2553,45 +3359,82 @@ Lädt...
 <div class="navbar">
 <button class="navbtn" onclick="show('home')">Home</button>
 <button class="navbtn" onclick="show('deals')">Deals</button>
+<button class="navbtn" onclick="show('games')">Spiele</button>
+<button class="navbtn" onclick="show('wm')">Tippspiel</button>
 <button class="navbtn" onclick="show('profile')">Profil</button>
 </div>
 
 <script>
 const deals = [
 {
-name:"Hellspin",
-domain:"hellspin.com",
-badge:"TOP DEAL",
-bonus:"100% Non-Sticky bis 1.000€ + 100 FS",
-details:[
-"🎁 Welcome Package: 2.500€ + 350 Freispiele",
-"💰 1. Einzahlung: 100% bis 1.000€ + 100 FS",
-"💸 2. Einzahlung: 100% bis 500€ + 100 FS",
-"🎰 3. Einzahlung: 100% bis 500€ + 75 FS",
-"🔥 4. Einzahlung: 100% bis 500€ + 75 FS",
-"✅ Non-Sticky Bonus",
-"🔄 40x Wager",
-"🎯 5€ Max Bet",
-"♾️ Kein Max Cashout im Bonus",
-"🏆 Sportwetten verfügbar",
-"⚡ Sehr schnelle Auszahlung"
-],
-link:"https://mio.novarao.com/redirect.aspx?pid=108389&lpid=9&bid=1466"
+  name:"RingoSpin",
+  domain:"ringospin.com",
+  badge:"NONSTICKY",
+  bonus:"100% Nonsticky bis 500€",
+  details:[
+    "💰 100% Nonsticky bis 500€",
+    "🔄 35x Wager",
+    "💶 Mindesteinzahlung 20€",
+    "🎰 5€ Maxbet",
+    "🚫 10x Maxcashout im Bonus",
+    "⚡ Schnelle Auszahlung"
+  ],
+  link:"https://maglead.buzz/click?o=1842&a=25190&link_id=9013"
 },
 
 {
-    name:"Stakes",
-    domain:"stakes.com",
-    badge:"TOP DEAL",
-    bonus:"200% Non-Sticky Bonus",
-    details:[
-        "💰 200% Non-Sticky Bonus",
-        "🎯 5€ Max Bet",
-        "💸 Kein Max Cashout",
-        "⚡ Schnelle Auszahlung",
-        "⚠️ Gesperrte Spiele vermeiden (Liste per PN erhältlich)"
-    ],
-    link:"https://record.sc2707.com/_DwVgI1Xp-j4so-PlRgc4gGNd7ZgqdRLk/1/?pg=1"
+name:"Lucky Meister",
+domain:"luckymeister.site",
+badge:"TOP",
+bonus:"100% Bonus bis 3.000€",
+details:[
+"🔥 1. Einzahlung: 100% bis 3.000€",
+"🎁 2. Einzahlung: 100% bis 1.000€",
+"💳 20€ Mindesteinzahlung",
+"🔑 2. Einzahlung: Code WELCOME2",
+"🔄 40x Wager",
+"🎯 5€ Max Bet",
+"🏆 Max Cashout 5.000€ im Bonus"
+],
+link:"https://luckymeister.site/acs4oranhs"
+},
+
+{
+name:"Slotozen",
+domain:"slotozen",
+badge:"TOP",
+bonus:"Bis zu 5 Einzahlungsboni + 500 FS",
+details:[
+"🎁 1. Einzahlung: 100% + 100 FS",
+"💰 2. Einzahlung: 50% + 100 FS",
+"🎰 3. Einzahlung: 75% + 100 FS",
+"🔥 4. Einzahlung: 50% + 100 FS",
+"👑 5. Einzahlung: 100% + 100 FS",
+"📌 Sticky Bonus • 10x Max Cashout",
+"💳 20€ Mindesteinzahlung",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung • ca. 1 Stunde"
+],
+link:"https://zelinks.net/aptmbnjfq"
+},
+
+{
+name:"Wantedwin",
+domain:"wantedwin",
+badge:"TOP",
+bonus:"Bis zu 5 Einzahlungsboni + 500 FS",
+details:[
+"🎁 1. Einzahlung: 100% + 100 FS",
+"💰 2. Einzahlung: 50% + 100 FS",
+"🎰 3. Einzahlung: 75% + 100 FS",
+"🔥 4. Einzahlung: 50% + 100 FS",
+"👑 5. Einzahlung: 100% + 100 FS",
+"📌 Sticky Bonus • 10x Max Cashout",
+"💳 20€ Mindesteinzahlung",
+"🎯 5€ Max Bet",
+"⚡ Schnelle Auszahlung • ca. 1 Stunde"
+],
+link:"https://want-l.ink/aa9giaay4"
 },
 
 {
@@ -2653,21 +3496,7 @@ details:[
 "🎯 5€ Max Bet",
 "⚡ Schnelle Auszahlung"
 ],
-link:"https://www.rich-l.ink/aka2brptt"
-},
-
-{
-name:"ShinyWildz",
-domain:"partners.shinywildpartners.com",
-badge:"TOP DEAL",
-bonus:"100% Non-Sticky bis 500€",
-details:[
-"🎰 Wager 35x",
-"💰 Kein Max Cashout",
-"🖐️ 5€ Max Bet",
-"🏦 Auszahlung ca. 2 Tage"
-],
-link:"https://partners.shinywildpartners.com/v2/text/298/9/b83eb1d7-7b78-11f1-8d87-cad21936ea85/1"
+link:"https://www.rich-l.ink/apzfhrgbx"
 },
 
 {
@@ -2683,7 +3512,7 @@ details:[
 "🎯 5€ Max Bet",
 "⚡ Schnelle Auszahlung"
 ],
-link:"https://staylinks.net/alvwtd3cx"
+link:"https://staylinks.net/afu5k0ged"
 },
 
 {
@@ -2713,7 +3542,7 @@ details:[
 "💰 27,5x Max Cashout",
 "🖐️ 5€ Max Bet"
 ],
-link:"https://record.spinaffs.com/_ZOoOlv38FQi22a5QkwDt8GNd7ZgqdRLk/1/?pg=1"
+link:"https://record.spinaffs.com/_ZOoOlv38FQi22a5QkwDt8GNd7ZgqdRLk/1/?pg=2"
 },
 
 {
@@ -2743,7 +3572,7 @@ document.querySelector(`[onclick="show('${p}')"]`)?.classList.add('active');
 if(p === "wm"){
   loadWmMatches();
   loadWmLeaderboard();
-  loadSpecialTips();
+  loadTipStats();
 }
 window.scrollTo(0, 0);
 }
@@ -2854,7 +3683,7 @@ const levelRewards = {
 const SUPABASE_URL = "https://apjfcvflgwzqpzocjzpj.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwamZjdmZsZ3d6cXB6b2NqenBqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjgzMTMxOCwiZXhwIjoyMDk4NDA3MzE4fQ.BLFMn7DbjHgOTIK4EVHFXu1W17mL2ta7zu8hRKtGCvI";
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const avatarUrls = {
 
@@ -2931,8 +3760,25 @@ const levelThresholds = {
 
 const current = levelThresholds[level];
 const next = levelThresholds[level + 1];
-document.getElementById("leveltitle").innerHTML =
-`⭐ Level ${level}`;
+document.getElementById("leveltitle").innerHTML = `
+  <span style="
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  ">
+    <img
+      src="icons/crew-crown.png"
+      alt="Crew"
+      style="
+        width:24px;
+        height:24px;
+        object-fit:contain;
+      "
+    >
+    Level ${level}
+  </span>
+`;
 
 document.getElementById("xp").innerText = xp;
 document.getElementById("level").innerText = level;
@@ -2973,20 +3819,53 @@ const reward = levelRewards[level + 1];
 
 if (reward) {
 
-    document.getElementById("rewardtitle").innerText =
-    `⭐ Level ${level + 1} - ${reward.title}`;
+    document.getElementById("rewardtitle").innerHTML = `
+        <span style="
+            display:flex;
+            align-items:center;
+            gap:7px;
+        ">
+            <img
+                src="icons/crew-crown.png"
+                alt="Crew"
+                style="
+                    width:24px;
+                    height:24px;
+                    object-fit:contain;
+                    flex-shrink:0;
+                "
+            >
+            <span>Level ${level + 1} - ${reward.title}</span>
+        </span>
+    `;
 
     document.getElementById("rewardtext").innerText =
     reward.text;
 
 } else {
 
-    document.getElementById("rewardtitle").innerText =
-    "👑 Höchstes Level erreicht";
+    document.getElementById("rewardtitle").innerHTML = `
+        <span style="
+            display:flex;
+            align-items:center;
+            gap:7px;
+        ">
+            <img
+                src="icons/crew-crown.png"
+                alt="Crew"
+                style="
+                    width:24px;
+                    height:24px;
+                    object-fit:contain;
+                    flex-shrink:0;
+                "
+            >
+            <span>Höchstes Level erreicht</span>
+        </span>
+    `;
 
     document.getElementById("rewardtext").innerText =
     "Du hast bereits alle Belohnungen freigeschaltet.";
-
 }
 
 document.getElementById("invitecount").innerText =
@@ -3159,7 +4038,7 @@ data.forEach((u,index)=>{
 
 const hidden =
 u.first_name
-? u.first_name.substring(0,2) + "***"
+? u.first_name
 : "Spieler";
 
 let medal = "🏅";
@@ -3260,12 +4139,37 @@ document.getElementById("avatarPicker").style.display = "none";
 
 };
 const slotSymbols = [
-"👑",
-"💎",
-"⚜️",
-"💰",
-"🎰"
+    "slot/slot_mini.png",
+    "slot/slot_minor.png",
+    "slot/slot_major.png",
+    "slot/slot_grand.png",
+    "slot/slot_loser.png"
 ];
+
+function showSlotPopup(type){
+
+    const popup = document.getElementById("slotPopup");
+    const image = document.getElementById("slotPopupImage");
+
+    const popupImages = {
+        mini: "slot/gewinn_mini.jpg",
+        minor: "slot/gewinn_minor.jpg",
+        major: "slot/gewinn_major.jpg",
+        grand: "slot/gewinn_grand.jpg",
+        loser: "slot/keingewinn.jpg"
+    };
+
+    image.src = popupImages[type] || popupImages.loser;
+
+    popup.style.display = "flex";
+}
+
+function closeSlotPopup(){
+
+    document.getElementById("slotPopup").style.display = "none";
+
+}
+
 window.spinSlot = async function(){
 const { data: u, error } = await client
   .from("users")
@@ -3288,6 +4192,9 @@ if (!u) {
 const btn = document.getElementById("spinBtn");
 const display = document.getElementById("slotDisplay");
 const resultEl = document.getElementById("slotResult");
+const slot1 = document.getElementById("slot1");
+const slot2 = document.getElementById("slot2");
+const slot3 = document.getElementById("slot3");
 
 btn.disabled = true;
 spinLocked = true;
@@ -3334,34 +4241,153 @@ if (!u) {
 
   const interval = setInterval(() => {
 
-    display.innerText =
-      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]} ` +
-      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]} ` +
-      `${slotSymbols[Math.floor(Math.random()*slotSymbols.length)]}`;
+    slot1.src = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+slot2.src = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+slot3.src = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
 
     counter++;
 
     if(counter > 32){
       clearInterval(interval);
-      display.classList.remove("slot-rolling");
+      
 
-      const final = [
-        slotSymbols[Math.floor(Math.random()*slotSymbols.length)],
-        slotSymbols[Math.floor(Math.random()*slotSymbols.length)],
-        slotSymbols[Math.floor(Math.random()*slotSymbols.length)]
-      ];
+let final;
 
-      display.innerText = final.join(" ");
+// GRAND Chance: exakt 1 zu 600
+const grandHit = Math.floor(Math.random() * 600) === 0;
+if(grandHit){
 
+    final = [
+        "slot/slot_grand.png",
+        "slot/slot_grand.png",
+        "slot/slot_grand.png"
+    ];
+
+}else{
+
+    // Normaler Zufallsdreh
+    do {
+
+        final = [
+            slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
+            slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
+            slotSymbols[Math.floor(Math.random() * slotSymbols.length)]
+        ];
+
+    } while (
+        final[0] === "slot/slot_grand.png" &&
+        final[1] === "slot/slot_grand.png" &&
+        final[2] === "slot/slot_grand.png"
+    );
+
+}
+
+slot1.src = final[0];
+
+setTimeout(() => {
+    slot2.src = final[1];
+}, 250);
+
+setTimeout(() => {
+
+    slot3.src = final[2];
+
+    display.classList.remove("slot-rolling");
+
+}, 500);
+
+setTimeout(() => {
       let xpGain = 0;
-      let msg = "🎰 Heute kein Gewinn";
+let msg = "😭 Kein Gewinn";
 
-      if(final[0] === final[1] && final[1] === final[2]){
-        xpGain = 50;
-        msg = "👑 ROYAL JACKPOT\n💎 +50 XP";
-      }
+let slotResultType = "loser";
+
+const threeSame =
+    final[0] === final[1] &&
+    final[1] === final[2];
+
+if(threeSame){
+
+    if(final[0] === "slot/slot_mini.png"){
+        xpGain = 5;
+        slotResultType = "mini";
+        msg = "🟢 MINI JACKPOT! +5 XP";
+    }
+
+    else if(final[0] === "slot/slot_minor.png"){
+        xpGain = 10;
+        slotResultType = "minor";
+        msg = "🔵 MINOR JACKPOT! +10 XP";
+    }
+
+    else if(final[0] === "slot/slot_major.png"){
+        xpGain = 25;
+        slotResultType = "major";
+        msg = "🔴 MAJOR JACKPOT! +25 XP";
+    }
+
+    else if(final[0] === "slot/slot_grand.png"){
+        xpGain = 0;
+        slotResultType = "grand";
+        msg = "👑 GRAND JACKPOT! 25 € EINZAHLUNG!";
+    }
+
+    else{
+        xpGain = 0;
+        slotResultType = "loser";
+        msg = "😭 Kein Gewinn";
+    }
+}
 
       resultEl.innerText = msg;
+      showSlotPopup(slotResultType);
+
+if(slotResultType === "grand"){
+
+    const telegramProfile =
+        window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+    client
+        .from("slot_wins")
+        .insert({
+            user_id: String(telegramUser),
+            first_name: telegramProfile?.first_name || "Unbekannt",
+            username: telegramProfile?.username || "",
+            prize_type: "grand_deposit",
+            prize_value: 25,
+            claimed: false
+        })
+        .then(({ error }) => {
+
+            if(error){
+                console.log("GRAND Gewinn konnte nicht gespeichert werden:", error);
+            }else{
+                console.log("GRAND Gewinn gespeichert! 👑");
+            }
+
+        });
+
+    fetch("https://grand-alert.dutchy521.workers.dev/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id: String(telegramUser),
+            first_name: telegramProfile?.first_name || "Unbekannt",
+            username: telegramProfile?.username || "",
+            prize_value: 25
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("GRAND Alert:", data);
+    })
+    .catch(err => {
+        console.log("GRAND Alert Fehler:", err);
+    });
+
+}
 
       client
         .from("users")
@@ -3371,11 +4397,10 @@ if (!u) {
         })
         .eq("id", String(telegramUser))
         .then(() => loadUser());
+btn.disabled = false;
+spinLocked = false;
 
-      setTimeout(() => {
-  btn.disabled = false;
-  spinLocked = false;
-}, 1500);
+}, 650);
     }
 
   }, 85);
@@ -3387,54 +4412,6 @@ if (!u) {
   btn.disabled = false;
   spinLocked = false;
 }
-
-}
-
-
-
-async function answerDaily(answer){
-
-const btns = document.querySelectorAll("#wm button");
-btns.forEach(b => b.disabled = true);
-
-const result = document.getElementById("dailyResult");
-
-try {
-
-const { error } = await client
-  .from("wm_daily_answers")
-  .insert({
-    user_id: String(telegramUser),
-    answer: answer
-  });
-
-if(error){
-
-  if(error.code === "23505"){
-    result.innerText = "⛔ Du hast heute schon geantwortet";
-  } else {
-    result.innerText = "❌ Fehler beim Speichern";
-    console.log(error);
-  }
-
-  return;
-}
-
-if(answer === "20"){
-await addWmPoints(telegramUser, 1);
-result.innerText = "✅ Richtig! +1 Punkt";
-}else{
-result.innerText = "❌ Falsch!";
-}
-
-} catch(err){
-console.log(err);
-result.innerText = "❌ Fehler";
-}
-
-setTimeout(() => {
-  btns.forEach(b => b.disabled = false);
-}, 1500);
 
 }
 
@@ -3500,186 +4477,172 @@ window.loadWmMatches = async function(){
     let html = "";
 
     // 3. 🔥 HIER IST DER WICHTIGE FIX IM LOOP
-    data.forEach(match => {
+   data.forEach(match => {
 
-      const tip = getTip(match.id); // 👈 DAS IST DER FEHLENDE PART
+  const tip = getTip(match.id);
 
-      html += `
-        <div style="margin-bottom:18px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.4);">
+  html += `
+    <div style="
+      margin-bottom:18px;
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,215,0,0.18);
+    ">
 
-          <div style="font-size:12px;opacity:0.7;">
-            ${match.stage || "Spiel"}
-          </div>
+      <div style="
+        font-size:12px;
+        opacity:0.7;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        margin-bottom:12px;
+      ">
+        ${match.stage || "Fußball"}
+      </div>
 
-          <div style="
-          text-align:center;
-          margin-top:10px;
-          ">
-
-          <div style="
-          font-size:42px;
-          margin-bottom:10px;
-          ">
-          ${match.home_flag || ""} 🆚 ${match.away_flag || ""}
-          </div>
-
-<div style="
-font-size:20px;
-font-weight:900;
-">
-${match.home_team || "Home"}
-</div>
-
-<div style="
-margin:6px 0;
-opacity:0.7;
-">
-VS
-</div>
-
-<div style="
-font-size:20px;
-font-weight:900;
-">
-${match.away_team || "Away"}
-</div>
-
-</div>
+      <div style="text-align:center;">
 
         <div style="
-          margin-top:4px;
-          font-size:12px;
-          opacity:0.8;
+          font-size:38px;
+          margin-bottom:12px;
         ">
-          📅 ${new Date(match.start_time).toLocaleDateString("de-DE")}
-          •
-          🕒 ${new Date(match.start_time).toLocaleTimeString("de-DE", {
-            hour: "2-digit",
-            minute: "2-digit"
-          })}
-</div>
-          ${match.home_score != null && match.away_score != null ? `
-          <div style="
-            margin-top:6px;
-            font-weight:700;
-            color:#ff6b2c;
-          ">
-            Ergebnis: ${match.home_score} : ${match.away_score}
-          </div>
-`         : ""}
-          <div style="
-           display:flex;
-           justify-content:center;
-           align-items:center;
-           gap:15px;
-           margin:18px 0;
-           ">
-            <input
-             id="home_${match.id}"
-             type="number"
-             placeholder="0"
-
-             style="
-             width:70px;
-             height:70px;
-
-             font-size:28px;
-             font-weight:900;
-
-             text-align:center;
-
-             border-radius:18px;
-             border:none;
-
-             background:rgba(255,255,255,0.12);
-             color:white;
-"
-             value="${tip?.home_tip || ""}">
-
-            <input
-             id="away_${match.id}"
-             type="number"
-             placeholder="0"
-
-             style="
-             width:70px;
-             height:70px;
-
-             font-size:28px;
-             font-weight:900;
-
-             text-align:center;
-
-             border-radius:18px;
-             border:none;
-
-             background:rgba(255,255,255,0.12);
-             color:white;
-"
-             value="${tip?.away_tip || ""}">
-          </div>
-
-          <button onclick="saveTip(${match.id})">
-            Tipp speichern
-          </button>
-
-          ${tip ? `
-<div style="
-margin-top:12px;
-
-padding:10px;
-
-border-radius:14px;
-
-background:
-rgba(0,255,120,0.12);
-
-border:
-1px solid rgba(0,255,120,0.25);
-
-font-weight:700;
-">
-
-✅ Tipp abgegeben
-
-<br><br>
-
-🎯 ${tip.home_tip} : ${tip.away_tip}
-
-</div>
-` : ""}
-
+          ${match.home_flag || ""} 🆚 ${match.away_flag || ""}
         </div>
-      `;
 
-    });
+        <div style="
+          font-size:22px;
+          font-weight:900;
+        ">
+          ${match.home_team || "Heimteam"}
+        </div>
 
-    container.innerHTML = html;
+        <div style="
+          margin:8px 0;
+          opacity:0.6;
+          font-size:13px;
+        ">
+          gegen
+        </div>
+
+        <div style="
+          font-size:22px;
+          font-weight:900;
+        ">
+          ${match.away_team || "Auswärtsteam"}
+        </div>
+
+      </div>
+
+      <div style="
+        margin-top:14px;
+        font-size:13px;
+        opacity:0.8;
+        text-align:center;
+      ">
+        📅 ${new Date(match.start_time).toLocaleDateString("de-DE")}
+        &nbsp;•&nbsp;
+        🕒 ${new Date(match.start_time).toLocaleTimeString("de-DE", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })}
+      </div>
+
+      ${match.home_score != null && match.away_score != null ? `
+        <div style="
+          margin-top:12px;
+          text-align:center;
+          font-weight:800;
+          color:#ffd700;
+        ">
+          Endstand: ${match.home_score} : ${match.away_score}
+        </div>
+      ` : ""}
+
+      <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:15px;
+        margin:20px 0 14px;
+      ">
+
+        <input
+          id="home_${match.id}"
+          type="number"
+          min="0"
+          placeholder="0"
+          style="
+            width:70px;
+            height:70px;
+            font-size:28px;
+            font-weight:900;
+            text-align:center;
+            border-radius:18px;
+            border:none;
+            background:rgba(255,255,255,0.12);
+            color:white;
+          "
+          value="${tip?.home_tip ?? ""}"
+        >
+
+        <div style="
+          font-weight:900;
+          font-size:20px;
+        ">
+          :
+        </div>
+
+        <input
+          id="away_${match.id}"
+          type="number"
+          min="0"
+          placeholder="0"
+          style="
+            width:70px;
+            height:70px;
+            font-size:28px;
+            font-weight:900;
+            text-align:center;
+            border-radius:18px;
+            border:none;
+            background:rgba(255,255,255,0.12);
+            color:white;
+          "
+          value="${tip?.away_tip ?? ""}"
+        >
+
+      </div>
+
+      <button onclick="saveTip(${match.id})">
+        🎯 Tipp speichern
+      </button>
+
+      ${tip ? `
+        <div style="
+          margin-top:12px;
+          padding:12px;
+          border-radius:14px;
+          background:rgba(0,255,120,0.12);
+          border:1px solid rgba(0,255,120,0.25);
+          font-weight:700;
+          text-align:center;
+        ">
+          ✅ Tipp abgegeben<br><br>
+          🎯 Dein Tipp: ${tip.home_tip} : ${tip.away_tip}
+        </div>
+      ` : ""}
+
+    </div>
+  `;
+
+});
+
+container.innerHTML = html;
 
   } catch(err){
     console.log(err);
     container.innerHTML = "Fehler beim Laden";
   }
-}
-
-window.loadSpecialTips = async function(){
-
-const { data } = await client
-.from("wm_special_tips")
-.select("*")
-.eq("user_id", String(telegramUser))
-.single();
-
-if(!data) return;
-
-document.getElementById("mySpecialTips").innerHTML = `
-<b>🏆 Deine Sondertipps</b><br><br>
-
-🏆 Weltmeister: ${data.world_champion || "-"}<br>
-🇩🇪 Deutschland: ${data.germany_result || "-"}<br>
-⚽ Torschützenkönig: ${data.top_scorer || "-"}
-`;
-
 }
 
 window.saveTip = async function(matchId){
@@ -3729,55 +4692,56 @@ alert("Tipp gespeichert!");
 
 await loadWmMatches();
 await loadWmLeaderboard();
+await loadTipStats();
 }
 async function calculateMatchPoints(matchId){
 
-  const { data: match } = await client
-    .from("wm_matches")
-    .select("*")
-    .eq("id", matchId)
-    .single();
+  try {
 
-  if(!match || match.home_score == null || match.away_score == null) return;
+    const { error } = await window.client.rpc(
+      "calculate_match_points",
+      {
+        p_match_id: matchId
+      }
+    );
 
-  // ❌ schon berechnet → raus
-  if(match.points_calculated) return;
-
-  const { data: tips } = await client
-    .from("wm_tips")
-    .select("*")
-    .eq("match_id", matchId);
-
-  if(!tips) return;
-
-  const realDiff = match.home_score - match.away_score;
-
-  for(const tip of tips){
-
-    let points = 0;
-    const tipDiff = tip.home_tip - tip.away_tip;
-
-    if(tip.home_tip === match.home_score && tip.away_tip === match.away_score){
-      points = 3;
-    }
-    else if(
-      (realDiff > 0 && tipDiff > 0) ||
-      (realDiff < 0 && tipDiff < 0) ||
-      (realDiff === 0 && tipDiff === 0)
-    ){
-      points = 1;
+    if(error){
+      console.error("Fehler bei Punkteberechnung:", error);
+      return;
     }
 
-    await addWmPoints(tip.user_id, points);
+    console.log("Spiel ausgewertet:", matchId);
+
+  } catch(err){
+
+    console.error("Fehler bei Punkteberechnung:", err);
+
   }
 
-  // ✅ markieren als fertig
-  await client
-    .from("wm_matches")
-    .update({ points_calculated: true })
-    .eq("id", matchId);
 }
+setInterval(async () => {
 
+  const { data: matches, error } = await window.client
+    .from("wm_matches")
+    .select("*")
+    .eq("points_calculated", false);
+
+  if(error || !matches) return;
+
+  for(const match of matches){
+
+    if(
+      match.home_score != null &&
+      match.away_score != null
+    ){
+
+      await calculateMatchPoints(match.id);
+
+    }
+
+  }
+
+}, 10000);
 async function setMatchResult(matchId, homeScore, awayScore) {
 
   await client
@@ -3795,7 +4759,7 @@ window.loadWmLeaderboard = async function(){
 
   try {
 
-    const { data } = await client
+    const { data: ranking, error: rankingError } = await window.client
       .from("wm_points")
       .select("user_id, points")
       .order("points", { ascending:false })
@@ -3803,126 +4767,171 @@ window.loadWmLeaderboard = async function(){
 
     const container = document.getElementById("wmLeaderboard");
 
-    if(!data || data.length === 0){
+    if(rankingError){
+      console.log("Leaderboard Fehler:", rankingError);
+      return;
+    }
+
+    if(!ranking || ranking.length === 0){
       container.innerHTML = "Noch keine Punkte";
       return;
     }
 
+    const userIds = ranking.map(u => String(u.user_id));
+
+    const { data: users, error: usersError } = await window.client
+      .from("users")
+      .select("id, first_name")
+      .in("id", userIds);
+
+    if(usersError){
+      console.log("User Fehler:", usersError);
+    }
+
     let html = "";
 
-    data.forEach((u, i) => {
+    ranking.forEach((u, i) => {
 
-      const hiddenId = String(u.user_id).slice(0,3) + "****";
+      let medal = "";
+
+      if(i === 0) medal = "🥇";
+      else if(i === 1) medal = "🥈";
+      else if(i === 2) medal = "🥉";
+      else medal = `#${i + 1}`;
+
+      const user = users?.find(
+        x => String(x.id) === String(u.user_id)
+      );
+
+      const displayName =
+        user?.first_name || "Spieler";
 
       html += `
-        <div style="margin-bottom:10px;">
-          <b>#${i+1}</b> • ${hiddenId}<br>
-          ⭐ ${u.points || 0} Punkte
+        <div style="
+        margin-bottom:14px;
+        padding:12px;
+        border-radius:14px;
+        background:rgba(255,255,255,0.05);
+        ">
+          <b>${medal} ${displayName}</b>
+          <span style="float:right;">
+            ⭐ ${u.points || 0}
+          </span>
         </div>
       `;
+
     });
 
     container.innerHTML = html;
 
-    // 👉 eigene Platzierung
-    const all = await client
+    // eigene Platzierung
+    const { data: all } = await window.client
       .from("wm_points")
       .select("user_id, points")
       .order("points", { ascending:false });
 
-    if(all.data){
+    if(all){
 
-      const myIndex = all.data.findIndex(
+      const myIndex = all.findIndex(
         u => String(u.user_id) === String(telegramUser)
       );
 
       if(myIndex >= 0){
 
-        const me = all.data[myIndex];
+        const me = all[myIndex];
 
         document.getElementById("myWmRank").innerHTML = `
-          🏅 Platz #${myIndex+1}<br>
+          🏅 Platz #${myIndex + 1}<br>
           ⭐ ${me.points || 0} Punkte
         `;
+
       }
+
     }
 
   } catch(err){
-    console.log(err);
+
+    console.log("Leaderboard Fehler:", err);
+
   }
-}
-
-window.saveSpecialTips = async function(){
-
-const result = document.getElementById("specialTipsResult");
-
-const { data } = await client
-.from("wm_special_tips")
-.select("*")
-.eq("user_id", String(telegramUser));
-
-if(data && data.length > 0){
-result.innerHTML = "⛔ Bereits abgegeben";
-return;
-}
-
-let topScorer = document.getElementById("topScorer").value;
-
-if(topScorer === "Anderer Spieler"){
-topScorer = document.getElementById("otherTopScorer").value;
-}
-
-await client
-.from("wm_special_tips")
-.insert({
-
-user_id: String(telegramUser),
-
-world_champion:
-document.getElementById("worldChampion").value,
-
-germany_result:
-document.getElementById("germanyResult").value,
-
-top_scorer: topScorer
-
-});
-
-result.innerHTML = "✅ Sondertipps gespeichert";
-
-await loadSpecialTips();
 
 }
 
-document.getElementById("topScorer").addEventListener("change", function(){
+window.loadTipStats = async function(){
 
-const field = document.getElementById("otherTopScorer");
+  try{
 
-if(this.value === "Anderer Spieler"){
-field.style.display = "block";
-}else{
-field.style.display = "none";
-}
+    // ALLE PUNKTE LADEN
+    const { data: ranking } = await client
+      .from("wm_points")
+      .select("user_id, points")
+      .order("points", { ascending:false });
 
-});
-setInterval(async () => {
+    let myPoints = 0;
+    let myRank = "-";
 
-  const { data } = await client
-    .from("wm_matches")
-    .select("*")
-    .eq("points_calculated", false);
+    if(ranking && ranking.length > 0){
 
-  if(!data) return;
+      const myIndex = ranking.findIndex(
+        u => String(u.user_id) === String(telegramUser)
+      );
 
-  for(const match of data){
+      if(myIndex >= 0){
 
-    if(match.home_score != null && match.away_score != null){
-      await calculateMatchPoints(match.id);
+        myPoints = ranking[myIndex].points || 0;
+        myRank = "#" + (myIndex + 1);
+
+      }
+
     }
 
+    // PUNKTE OBEN ANZEIGEN
+    document.getElementById("wmPointsTop").innerText = myPoints;
+
+    // RANG OBEN ANZEIGEN
+    document.getElementById("wmRankTop").innerText = myRank;
+
+
+    // ANZAHL DER EIGENEN TIPPS
+    const { data: myTips } = await client
+      .from("wm_tips")
+      .select("id")
+      .eq("user_id", String(telegramUser));
+
+    document.getElementById("wmTipsTop").innerText =
+      myTips?.length || 0;
+
+
+  }catch(err){
+
+    console.log("TipStats Fehler:", err);
+
   }
 
-}, 10000);
+}
+
+
+
+window.togglePastMatches = async function(){
+
+  const container = document.getElementById("pastMatches");
+  const btn = document.getElementById("pastMatchesBtn");
+
+  if(container.style.display === "none"){
+
+    container.style.display = "block";
+    btn.innerText = "⬆️ Vergangene Spiele ausblenden";
+
+    await loadPastMatches();
+
+  }else{
+
+    container.style.display = "none";
+    btn.innerText = "📜 Vergangene Spiele anzeigen";
+
+  }
+
+}
 
 window.loadPastMatches = async function(){
 
@@ -3954,23 +4963,107 @@ window.loadPastMatches = async function(){
         t => String(t.match_id) === String(match.id)
       );
 
+      const points = tip?.points ?? 0;
+
+      let pointsText = "0 Punkte";
+
+      if(tip){
+        if(points === 3){
+          pointsText = "✅ 3 Punkte";
+        }
+        else if(points === 1){
+          pointsText = "🟡 1 Punkt";
+        }
+        else{
+          pointsText = "❌ 0 Punkte";
+        }
+      }
+
       html += `
-        <div class="card">
+        <div style="
+          margin-bottom:18px;
+          padding:16px;
+          border-radius:18px;
+          background:rgba(255,255,255,0.06);
+          border:1px solid rgba(255,215,0,0.18);
+        ">
 
-          <div style="font-weight:900;">
-            ${match.home_flag || ""} ${match.home_team}
-            vs
-            ${match.away_flag || ""} ${match.away_team}
+          <div style="
+            font-size:12px;
+            opacity:0.7;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            margin-bottom:12px;
+          ">
+            ${match.stage || "Fußball"}
           </div>
 
-          <div style="margin-top:8px;">
-            🏆 Ergebnis:
-            <b>${match.home_score ?? "-"} : ${match.away_score ?? "-"}</b>
+          <div style="
+            text-align:center;
+            font-size:21px;
+            font-weight:900;
+          ">
+            ${match.home_flag || ""}
+            ${match.home_team || "Heimteam"}
+
+            <div style="
+              margin:8px 0;
+              font-size:13px;
+              opacity:0.6;
+              font-weight:500;
+            ">
+              gegen
+            </div>
+
+            ${match.away_flag || ""}
+            ${match.away_team || "Auswärtsteam"}
           </div>
 
-          <div style="margin-top:8px;">
-            🎯 Dein Tipp:
-            <b>
+          <div style="
+            margin-top:14px;
+            text-align:center;
+            font-size:13px;
+            opacity:0.75;
+          ">
+            📅 ${new Date(match.start_time).toLocaleDateString("de-DE")}
+          </div>
+
+          ${match.home_score != null && match.away_score != null ? `
+  <div style="
+    margin-top:16px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,215,0,0.08);
+    text-align:center;
+  ">
+    🏆 Endergebnis<br>
+    <b style="font-size:24px;">
+      ${match.home_score} : ${match.away_score}
+    </b>
+  </div>
+` : `
+  <div style="
+    margin-top:16px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,165,0,0.10);
+    border:1px solid rgba(255,165,0,0.22);
+    text-align:center;
+    font-weight:800;
+  ">
+    ⏳ Ergebnis ausstehend
+  </div>
+`}
+
+          <div style="
+            margin-top:10px;
+            padding:12px;
+            border-radius:14px;
+            background:rgba(255,255,255,0.06);
+            text-align:center;
+          ">
+            🎯 Dein Tipp<br>
+            <b style="font-size:20px;">
               ${
                 tip
                 ? `${tip.home_tip} : ${tip.away_tip}`
@@ -3979,10 +5072,30 @@ window.loadPastMatches = async function(){
             </b>
           </div>
 
-          <div style="margin-top:8px;">
-            ⭐ Punkte:
-            <b>${tip?.points || 0}</b>
-          </div>
+          ${match.home_score != null && match.away_score != null ? `
+  <div style="
+    margin-top:10px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(0,255,120,0.08);
+    text-align:center;
+    font-weight:900;
+  ">
+    ⭐ ${tip ? pointsText : "Kein Tipp abgegeben"}
+  </div>
+` : `
+  <div style="
+    margin-top:10px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.06);
+    text-align:center;
+    font-weight:800;
+    opacity:0.8;
+  ">
+    ⏳ Auswertung folgt
+  </div>
+`}
 
         </div>
       `;
@@ -4060,6 +5173,37 @@ JETZT SPIELEN
 }	
 }
 
+function openRunner(){
+    window.location.href = "runL.html";
+}
+
+function openBasketball(){
+    window.location.href = "cashout-basketball-cashoutcrew.html";
+}
+
+function openWhackBensch(){
+    window.location.href = "whack-a-bensch.html";
+}
+
+function openBenschJump(){
+    window.location.href = "bensch-jump.html";
+}
+
+function openBenschBreakout(){
+    window.location.href = "bensch-breakout.html";
+}
+
+function openCashoutHighway(){
+    window.location.href = "cashout-highway.html";
+}
+
+function openBenschCannon(){
+    window.location.href = "bensch-cannon.html";
+}
+
+function openBenschHunt(){
+    window.location.href = "bensch-hunt.html";
+}
 function openSlot(){
 
     show("home");
@@ -4141,6 +5285,90 @@ function openGiveawayBot(){
 
 }
 
+// Direkter Rücksprung aus den Minigames
+window.addEventListener("load", function () {
+
+    if (window.location.hash === "#games") {
+        show("games");
+    }
+
+});
+
+// =========================
+// CREW LIVE TICKER
+// =========================
+
+// =========================
+// CREW LIVE TICKER SUPABASE
+// =========================
+
+async function loadCrewTicker(){
+
+    const ticker = document.getElementById("crewTickerTrack");
+
+    if(!ticker) return;
+
+    try{
+
+        const now = new Date().toISOString();
+
+        const { data, error } = await window.client
+    .from("crew_updates")
+            .select("*")
+            .eq("active", true)
+            .lte("starts_at", now)
+            .order("created_at", { ascending:false });
+
+        console.log("CREW TICKER DATA:", data);
+        console.log("CREW TICKER ERROR:", error);
+
+        if(error){
+
+            ticker.innerHTML = `
+                <span>⚠️ Ticker Fehler: ${error.message}</span>
+            `;
+
+            return;
+        }
+
+        const activeUpdates = (data || []).filter(update => {
+
+            if(!update.ends_at){
+                return true;
+            }
+
+            return new Date(update.ends_at) > new Date();
+
+        });
+
+        console.log("AKTIVE CREW UPDATES:", activeUpdates);
+
+        if(activeUpdates.length === 0){
+
+            ticker.innerHTML = `
+                <span>🔥 Willkommen bei der Cashout Crew!</span>
+            `;
+
+            return;
+        }
+
+        ticker.innerHTML = activeUpdates
+            .map(update => `<span>${update.message}</span>`)
+            .join("");
+
+    }catch(err){
+
+    console.log("Crew Ticker Fehler:", err);
+
+    ticker.innerHTML = `
+        <span>⚠️ Ticker Fehler: ${err.message}</span>
+    `;
+
+}
+
+}
+
+loadCrewTicker();
 </script>
 
 </body>
