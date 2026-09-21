@@ -1124,10 +1124,6 @@ if __name__ == "__main__":
                 long_polling_timeout=20,
                 allowed_updates=["message", "callback_query"]
             )
-                skip_pending=True,
-                timeout=20,
-                long_polling_timeout=20
-            )
 
         except Exception:
             import traceback
