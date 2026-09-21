@@ -1119,6 +1119,11 @@ if __name__ == "__main__":
             print(">>> Polling gestartet...")
 
             bot.infinity_polling(
+                skip_pending=False,
+                timeout=20,
+                long_polling_timeout=20,
+                allowed_updates=["message", "callback_query"]
+            )
                 skip_pending=True,
                 timeout=20,
                 long_polling_timeout=20

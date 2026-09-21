@@ -1981,13 +1981,13 @@ opacity:.8;
 margin-top:5px;
 opacity:.7;
 ">
-🎰 Shiny Wildz
+---------
 </div>
 
 </div>
 
 <button
-onclick="window.open('https://partners.shinywildpartners.com/v2/text/298/9/b83eb1d7-7b78-11f1-8d87-cad21936ea85/1','_blank')"
+onclick="window.open('"
 style="
 height:48px;
 padding:0 18px;
@@ -2540,6 +2540,38 @@ Dort kannst du deine Einzahlung wie gewohnt posten.
         drop-shadow(0 0 16px rgba(255,215,0,0.28));
     "
   >
+</div>
+
+<!-- CASHOUT CREW FIGHT NIGHT -->
+<div class="card">
+
+    <div style="
+    font-size:34px;
+    text-align:center;
+    margin-bottom:10px;
+    ">
+        🥊
+    </div>
+
+    <h3 style="text-align:center;">
+        Cashout Crew: Fight Night
+    </h3>
+
+    <div style="
+    text-align:center;
+    opacity:.75;
+    line-height:1.5;
+    margin-bottom:15px;
+    ">
+        Kämpfe dich durch 12 immer schwierigere Ebenen,
+        schalte neue Crew-Charaktere und ihre Spezialfähigkeiten frei
+        und sichere dir den höchsten Run-Score.
+    </div>
+
+    <button onclick="openCashoutFight()">
+        🥊 SPIEL STARTEN
+    </button>
+
 </div>
 
     <div class="card">
@@ -3367,36 +3399,95 @@ Lädt...
 <script>
 const deals = [
 {
-  name:"RingoSpin",
-  domain:"ringospin.com",
-  badge:"NONSTICKY",
-  bonus:"100% Nonsticky bis 500€",
-  details:[
-    "💰 100% Nonsticky bis 500€",
-    "🔄 35x Wager",
-    "💶 Mindesteinzahlung 20€",
-    "🎰 5€ Maxbet",
-    "🚫 10x Maxcashout im Bonus",
-    "⚡ Schnelle Auszahlung"
+  name: "Gamblezen",
+  domain: "gamblezens.com",
+  badge: "NON STICKY",
+  bonus: "250% Bonus bis 500€",
+  details: [
+    "🎁 250% Bonus bis 500€",
+    "💚 Erst Echtgeld, danach Bonusgeld",
+    "♾️ Im Echtgeld-/Non-Sticky-Bereich kein Max Cashout",
+    "💸 Im Bonus: Max Cashout 5x des Bonusbetrags",
+    "💡 Beispiel: 100€ Einzahlung → 250€ Bonus → 1.250€ Max Cashout im Bonus",
+    "🔄 Wager: 40x",
+    "🎯 Max Bet: 5€",
+    "🌍 VPN-freundlich"
   ],
-  link:"https://maglead.buzz/click?o=1842&a=25190&link_id=9013"
+  link: "https://gamblezens.com/afk7gepd7z"
 },
 
 {
-name:"Lucky Meister",
-domain:"luckymeister.site",
-badge:"TOP",
-bonus:"100% Bonus bis 3.000€",
-details:[
-"🔥 1. Einzahlung: 100% bis 3.000€",
-"🎁 2. Einzahlung: 100% bis 1.000€",
-"💳 20€ Mindesteinzahlung",
-"🔑 2. Einzahlung: Code WELCOME2",
-"🔄 40x Wager",
-"🎯 5€ Max Bet",
-"🏆 Max Cashout 5.000€ im Bonus"
-],
-link:"https://luckymeister.site/acs4oranhs"
+  name: "Vegadream",
+  domain: "vegadreampartners.com",
+  badge: "NON STICKY",
+  bonus: "Bis zu 300% Non-Sticky Bonus",
+  details: [
+    "💰 1. Einzahlung: 100% bis 1.100€ • 30x Wager",
+    "🎁 2. Einzahlung: 200% bis 500€ • 25x Wager",
+    "🔥 3. Einzahlung: 300% bis 600€ • 20x Wager",
+    "✅ Alle Boni NON STICKY",
+    "🎯 Max Bet: 5€",
+    "⚽ Sportwetten verfügbar",
+    "⚠️ Boni NICHT bei Krypto-Einzahlungen verfügbar",
+    "🚫 Verbotene Spiele im Bonus beachten!",
+    "📋 Liste der verbotenen Spiele findet ihr in der Gruppe"
+  ],
+  link: "https://partners.vegadreampartners.com/v2/text/67/3/114efe25-b104-11f1-ae72-06d980358673/1"
+},
+
+{
+  name: "Crocoslots",
+  domain: "crocoslotsmedia.com",
+  badge: "300% BONUS",
+  bonus: "300% Sticky Bonus bis 300€",
+  details: [
+    "🐊 300% Sticky Bonus bis 300€",
+    "💰 Beispiel: 100€ einzahlen → mit 400€ spielen",
+    "🔑 Bonuscode bei Anmeldung: FS50",
+    "💳 Mindesteinzahlung: 50€",
+    "🔄 Wager: 45x",
+    "🎯 Max Bet: 5€",
+    "💸 Max Cashout: 20x der Einzahlung",
+    "⚡ Sehr schnelle Auszahlung"
+  ],
+  link: "https://crocoslotsmedia.com/abkvioh20"
+},
+
+{
+  name: "Bitkingz",
+  domain: "bitkingzmedia.com",
+  badge: "300% BONUS",
+  bonus: "300% Sticky Bonus bis 300€",
+  details: [
+    "⚡ 300% Sticky Bonus bis 300€",
+    "💰 Beispiel: 100€ einzahlen → mit 400€ spielen",
+    "🔑 Bonuscode bei Anmeldung: FS50",
+    "💳 Mindesteinzahlung: 50€",
+    "🔄 Wager: 45x",
+    "🎯 Max Bet: 5€",
+    "💸 Max Cashout: 20x der Einzahlung",
+    "⚡ Sehr schnelle Auszahlung",
+    "⚽ Sportwetten verfügbar"
+  ],
+  link: "https://www.bitkingzmedia.com/ag0bxfnca"
+},
+
+{
+  name: "Metaspins",
+  domain: "metamedialinks.com",
+  badge: "CRYPTO",
+  bonus: "100% Sticky bis 50.000€",
+  details: [
+    "💰 100% Sticky Bonus bis 50.000€",
+    "♾️ Kein Max Cashout",
+    "₿ Reines Krypto-Casino",
+    "💶 Mindesteinzahlung: 25€",
+    "🎯 Max Bet: 5€",
+    "🔄 Wager: 40x",
+    "⚡ Sehr schnelle Auszahlung",
+    "⚽ Sportwetten verfügbar"
+  ],
+  link: "https://metamedialinks.com/eqepbclvd"
 },
 
 {
@@ -3468,22 +3559,6 @@ link:"https://go.affiliatedonbet.com/visit/?bta=3170018&brand=donbet"
 },
 
 {
-    name:"Slotsgem",
-    domain:"slotsgem.com",
-    badge:"TOP DEAL",
-    bonus:"120% Non-Sticky bis 600€",
-    details:[
-        "💰 120% Non-Sticky Bonus",
-        "🎰 40x Wager",
-        "🎯 5€ Max Bet",
-        "🎁 Maximaler Bonus 600€",
-        "🚫 Kein Max Cashout",
-        "⚡ Schnelle Auszahlung"
-    ],
-    link:"https://mio.novarao.com/redirect.aspx?pid=107138&lpid=601&bid=1487"
-},
-
-{
 name:"Richard Casino",
 domain:"richard.casino",
 badge:"TOP",
@@ -3533,31 +3608,20 @@ link:"https://go.spinwise.partners/visit/?bta=983606&brand=hypekasinocom"
 },
 
 {
-name:"Spinsino",
-domain:"record.spinaffs.com",
-badge:"TOP DEAL",
-bonus:"175% Non-Sticky bis 1000€",
-details:[
-"🎰 Wager laut Casino",
-"💰 27,5x Max Cashout",
-"🖐️ 5€ Max Bet"
-],
-link:"https://record.spinaffs.com/_ZOoOlv38FQi22a5QkwDt8GNd7ZgqdRLk/1/?pg=2"
+  name: "Kokobet",
+  domain: "kokotracking.com",
+  badge: "RAW PLAY",
+  bonus: "Perfekt zum Raw spielen",
+  details: [
+    "💳 Mindesteinzahlung: 30€",
+    "💰 Perfekt zum Raw spielen",
+    "🚫 Spielen ohne Bonus empfohlen",
+    "⚡ Sehr schnelle Auszahlung • ca. 1 Stunde",
+    "⚽ Sportwetten verfügbar"
+  ],
+  link: "https://kokotracking.com/dtfvewayo"
 },
 
-{
-name:"Rooli",
-domain:"rooli.live",
-badge:"TOP",
-bonus:"100% Sticky bis 500€",
-details:[
-"💰 Bonus bis 500€",
-"🏆 Max Cashout 5000€",
-"🎯 5€ Max Bet",
-"⚡ Schnelle Auszahlung"
-],
-link:"https://rooli.live/aaonnulcsq"
-},
 ];
 
 let spinLocked = false;
@@ -5175,6 +5239,16 @@ JETZT SPIELEN
 
 function openRunner(){
     window.location.href = "runL.html";
+}
+
+function openCashoutFight(){
+    const player = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    const userId = player?.id ? String(player.id) : String(telegramUser || "");
+    const firstName = player?.first_name || "Spieler";
+
+    window.location.href =
+        "cashout-fight-night.html?user_id=" + encodeURIComponent(userId) +
+        "&first_name=" + encodeURIComponent(firstName);
 }
 
 function openBasketball(){

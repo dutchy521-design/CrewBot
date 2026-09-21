@@ -957,6 +957,9 @@ let currentQuestions = [];
 let currentQuestionIndex = 0;
 let currentAttemptId = null;
 let quizQuestionStartedAt = null;
+let quizQuestionTimer = null;
+let quizQuestionTimeLeft = 0;
+let quizAnswerLocked = false;
 let puzzleTimer = null;
 let puzzleStartedAt = null;
 let currentPuzzle = null;
@@ -1800,24 +1803,228 @@ async function startQuiz(eventId){
 }
 
 function renderQuestion(){
+
+  clearInterval(quizQuestionTimer);
+  quizAnswerLocked = false;
+
   const q=currentQuestions[currentQuestionIndex];
+
   quizQuestionStartedAt=performance.now();
+
   const pct=(currentQuestionIndex/currentQuestions.length)*100;
+
+  const questionTime =
+    Number(currentQuiz?.question_time || 0);
+
+  quizQuestionTimeLeft = questionTime;
+
   document.getElementById("quizPlayBox").innerHTML=`
     <div class="card">
-      <div class="question-count">Frage ${currentQuestionIndex+1} von ${currentQuestions.length}</div>
-      <div class="progress"><div style="width:${pct}%"></div></div>
-      ${q.category?`<div style="text-align:center"><span class="pill wait">${esc(q.category)}</span></div>`:""}
-      ${q.image_url?`<img src="${esc(q.image_url)}" class="question-image" alt="Quiz Bild">`:""}
-      <div class="question-text">${esc(q.question)}</div>
-      <div class="answers">
-        ${q.displayOptions.map(o=>`<button class="answer" onclick="answerQuiz(${q.id},'${esc(o.code)}',this)">${esc(o.text)}</button>`).join("")}
+
+      <div class="question-count">
+        Frage ${currentQuestionIndex+1}
+        von ${currentQuestions.length}
       </div>
-    </div>`;
+
+      <div class="progress">
+        <div style="width:${pct}%"></div>
+      </div>
+
+      ${
+        questionTime > 0
+        ? `
+          <div
+            id="quizQuestionTimer"
+            class="timer"
+            style="text-align:center;font-size:28px"
+          >
+            ⏱ ${questionTime}
+          </div>
+        `
+        : ""
+      }
+
+      ${
+        q.category
+        ? `<div style="text-align:center">
+             <span class="pill wait">${esc(q.category)}</span>
+           </div>`
+        : ""
+      }
+
+      ${
+        q.image_url
+        ? `<img
+             src="${esc(q.image_url)}"
+             class="question-image"
+             alt="Quiz Bild"
+           >`
+        : ""
+      }
+
+      <div class="question-text">
+        ${esc(q.question)}
+      </div>
+
+      <div class="answers">
+
+        ${q.displayOptions.map(o=>`
+          <button
+            class="answer"
+            onclick="answerQuiz(
+              ${q.id},
+              '${esc(o.code)}',
+              this
+            )"
+          >
+            ${esc(o.text)}
+          </button>
+        `).join("")}
+
+      </div>
+
+    </div>
+  `;
+
+
+  // ==========================================
+  // FRAGEN TIMER
+  // ==========================================
+
+  if(questionTime > 0){
+
+    quizQuestionTimer=setInterval(()=>{
+
+      quizQuestionTimeLeft--;
+
+      const timer=
+        document.getElementById(
+          "quizQuestionTimer"
+        );
+
+      if(timer){
+
+        timer.textContent=
+          `⏱ ${quizQuestionTimeLeft}`;
+
+        if(quizQuestionTimeLeft <= 5){
+
+          timer.style.color=
+            "var(--red)";
+
+        }
+
+      }
+
+
+      if(quizQuestionTimeLeft <= 0){
+
+        clearInterval(
+          quizQuestionTimer
+        );
+
+        timeOutQuizQuestion();
+
+      }
+
+    },1000);
+
+  }
+
 }
 
+async function timeOutQuizQuestion(){
+
+  if(quizAnswerLocked)return;
+
+  quizAnswerLocked=true;
+
+  clearInterval(quizQuestionTimer);
+
+  document
+    .querySelectorAll(".answer")
+    .forEach(b=>b.disabled=true);
+
+
+  const q=
+    currentQuestions[
+      currentQuestionIndex
+    ];
+
+
+  const answerMs=
+    Number(currentQuiz?.question_time || 15)
+    * 1000;
+
+
+  // Keine Antwort = TIMEOUT
+  const {error}=await client.rpc(
+    "submit_crew_quiz_answer",
+    {
+      p_event_id:
+        currentQuiz.event_id,
+
+      p_question_id:
+        q.id,
+
+      p_user_id:
+        telegramUser,
+
+      p_selected_option:
+        "__TIMEOUT__",
+
+      p_attempt_id:
+        currentAttemptId,
+
+      p_answer_time_ms:
+        answerMs
+    }
+  );
+
+
+  if(error){
+
+    console.error(
+      "Quiz Timeout Fehler:",
+      error
+    );
+
+  }
+
+
+  currentQuestionIndex++;
+
+
+  if(
+    currentQuestionIndex >=
+    currentQuestions.length
+  ){
+
+    await finishQuiz();
+
+  }else{
+
+    setTimeout(
+      renderQuestion,
+      300
+    );
+
+  }
+
+}
+
+
 async function answerQuiz(questionId,selectedCode,btn){
-  document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+
+  if(quizAnswerLocked)return;
+
+  quizAnswerLocked=true;
+
+  clearInterval(quizQuestionTimer);
+
+  document
+    .querySelectorAll(".answer")
+    .forEach(b=>b.disabled=true);
   btn.style.borderColor="var(--gold)";
   const answerMs=Math.round(performance.now()-quizQuestionStartedAt);
 
